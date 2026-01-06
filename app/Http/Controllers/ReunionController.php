@@ -23,6 +23,7 @@ class ReunionController extends Controller
      */
     public function index(Request $request)
     {
+        
         $query = Reunion::with(['convocante', 'participantes']);
 
         // Filtro por estado
@@ -39,7 +40,7 @@ class ReunionController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        // Agregar información adicional
+        // Agregar información adicional        
         $reuniones->getCollection()->transform(function ($reunion) {
             $reunion->total_participantes = $reunion->participantes()->count();
             $reunion->participantes_asistieron = $reunion->participantes()
@@ -47,6 +48,7 @@ class ReunionController extends Controller
                 ->count();
             return $reunion;
         });
+        
 
         // Obtener años disponibles para el filtro
         $aniosDisponibles = Reunion::selectRaw('DISTINCT EXTRACT(YEAR FROM fecha_reunion) as anio')

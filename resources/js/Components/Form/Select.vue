@@ -7,10 +7,10 @@
     <select
       :id="id"
       :name="name"
-      :value="modelValue"
+      :value="modelValue ?? ''"
       :required="required"
       :disabled="disabled"
-      @change="$emit('update:modelValue', $event.target.value)"
+      @change="handleChange"
       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
       :class="{ 'border-red-500': error }"
     >
@@ -35,5 +35,11 @@ const props = defineProps({
   hint: String
 })
 
-defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
+
+const handleChange = (event) => {
+  const value = event.target.value
+  // Convertir a número si el valor original era un número
+  emit('update:modelValue', value === '' ? '' : (typeof props.modelValue === 'number' ? Number(value) : value))
+}
 </script>

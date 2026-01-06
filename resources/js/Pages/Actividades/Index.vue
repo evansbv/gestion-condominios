@@ -91,9 +91,9 @@
                     'bg-red-100 text-red-800': actividad.estado === 'CANCELADA'
                   }"
                 >
-                  {{ actividad.estado.replace('_', ' ') }}
+                  {{ actividad.estado ? actividad.estado.replace('_', ' ') : 'Sin estado' }}
                 </span>
-                <span class="text-xs text-gray-500">{{ actividad.tipo.replace(/_/g, ' ') }}</span>
+                <span class="text-xs text-gray-500">{{ actividad.tipo ? actividad.tipo.replace(/_/g, ' ') : 'Sin tipo' }}</span>
               </div>
 
               <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ actividad.titulo }}</h3>
@@ -135,15 +135,15 @@
                 </div>
               </div>
 
-              <div v-if="actividad.total_recaudado !== undefined" class="mt-4 pt-4 border-t border-gray-200">
+              <div v-if="actividad.total_recaudado !== undefined && actividad.total_recaudado !== null" class="mt-4 pt-4 border-t border-gray-200">
                 <div class="grid grid-cols-2 gap-2 text-center">
                   <div>
                     <p class="text-xs text-gray-500">Recaudado</p>
-                    <p class="text-sm font-semibold text-green-600">Bs. {{ actividad.total_recaudado?.toFixed(2) }}</p>
+                    <p class="text-sm font-semibold text-green-600">Bs. {{ Number(actividad.total_recaudado || 0).toFixed(2) }}</p>
                   </div>
                   <div>
                     <p class="text-xs text-gray-500">Pendiente</p>
-                    <p class="text-sm font-semibold text-red-600">Bs. {{ actividad.total_pendiente?.toFixed(2) }}</p>
+                    <p class="text-sm font-semibold text-red-600">Bs. {{ Number(actividad.total_pendiente || 0).toFixed(2) }}</p>
                   </div>
                 </div>
               </div>

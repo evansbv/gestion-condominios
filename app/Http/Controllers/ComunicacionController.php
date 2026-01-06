@@ -22,7 +22,7 @@ class ComunicacionController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
+    {        
         $user = auth()->user();
 
         // Admin y directorio ven todas, otros solo las enviadas a ellos
@@ -63,11 +63,11 @@ class ComunicacionController extends Controller
                 ->where('user_id', $user->id)
                 ->first();
 
-            $comunicacion->leida = $destinatario ? $destinatario->pivot->leida : false;
+            $comunicacion->leida = $destinatario ? $destinatario->pivot->leido : false;
             $comunicacion->fecha_lectura = $destinatario ? $destinatario->pivot->fecha_lectura : null;
             $comunicacion->total_destinatarios = $comunicacion->destinatarios()->count();
             $comunicacion->total_leidas = $comunicacion->destinatarios()
-                ->wherePivot('leida', true)
+                ->wherePivot('leido', true)
                 ->count();
 
             return $comunicacion;
@@ -136,7 +136,7 @@ class ComunicacionController extends Controller
 
         // Asociar destinatarios
         $comunicacion->destinatarios()->attach($validated['destinatarios'], [
-            'leida' => false,
+            'leido' => false,
             'fecha_lectura' => null,
         ]);
 
@@ -181,9 +181,9 @@ class ComunicacionController extends Controller
                 ->where('user_id', $user->id)
                 ->first();
 
-            if ($destinatario && !$destinatario->pivot->leida) {
+            if ($destinatario && !$destinatario->pivot->leido) {
                 $comunicacion->destinatarios()->updateExistingPivot($user->id, [
-                    'leida' => true,
+                    'leido' => true,
                     'fecha_lectura' => now(),
                 ]);
             }
@@ -192,7 +192,7 @@ class ComunicacionController extends Controller
         // Agregar estadísticas de lectura
         $comunicacion->total_destinatarios = $comunicacion->destinatarios()->count();
         $comunicacion->total_leidas = $comunicacion->destinatarios()
-            ->wherePivot('leida', true)
+            ->wherePivot('leido', true)
             ->count();
 
         return Inertia::render('Comunicaciones/Show', [
@@ -277,7 +277,7 @@ class ComunicacionController extends Controller
         // Actualizar destinatarios
         $comunicacion->destinatarios()->sync(
             collect($validated['destinatarios'])->mapWithKeys(function ($userId) {
-                return [$userId => ['leida' => false, 'fecha_lectura' => null]];
+                return [$userId => ['leido' => false, 'fecha_lectura' => null]];
             })
         );
 
@@ -358,7 +358,7 @@ class ComunicacionController extends Controller
         $user = auth()->user();
 
         $comunicacion->destinatarios()->updateExistingPivot($user->id, [
-            'leida' => true,
+            'leido' => true,
             'fecha_lectura' => now(),
         ]);
 
@@ -396,7 +396,7 @@ class ComunicacionController extends Controller
         // Agregar tasa de lectura
         $comunicacionesRecientes->transform(function ($comunicacion) {
             $total = $comunicacion->destinatarios()->count();
-            $leidas = $comunicacion->destinatarios()->wherePivot('leida', true)->count();
+            $leidas = $comunicacion->destinatarios()->wherePivot('leido', true)->count();
             $comunicacion->tasa_lectura = $total > 0 ? round(($leidas / $total) * 100, 2) : 0;
             return $comunicacion;
         });

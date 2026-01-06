@@ -8,7 +8,7 @@
       :id="id"
       :type="type"
       :name="name"
-      :value="modelValue"
+      :value="modelValue ?? ''"
       :placeholder="placeholder"
       :required="required"
       :disabled="disabled"
@@ -16,7 +16,7 @@
       :min="min"
       :max="max"
       :step="step"
-      @input="$emit('update:modelValue', $event.target.value)"
+      @input="handleInput"
       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
       :class="{ 'border-red-500': error }"
     />
@@ -48,5 +48,15 @@ const props = defineProps({
   step: [String, Number]
 })
 
-defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
+
+const handleInput = (event) => {
+  const value = event.target.value
+  // Convertir a número si el tipo de input es number
+  if (props.type === 'number') {
+    emit('update:modelValue', value === '' ? '' : Number(value))
+  } else {
+    emit('update:modelValue', value)
+  }
+}
 </script>

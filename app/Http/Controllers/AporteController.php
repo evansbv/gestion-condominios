@@ -162,7 +162,7 @@ class AporteController extends Controller
             }
         }
 
-        $aporte->load(['actividad', 'vivienda', 'pagos']);
+        $aporte->load(['actividad', 'vivienda']);
 
         // Calcular mora actualizada
         $aporte->mora_actualizada = $aporte->calcularMora();
@@ -273,25 +273,18 @@ class AporteController extends Controller
         }
 
         // Manejar comprobante si existe
-        $comprobantePath = null;
+        $comprobantePath = $aporte->comprobante; // Mantener comprobante anterior si existe
         if ($request->hasFile('comprobante')) {
             $comprobantePath = $request->file('comprobante')->store('comprobantes', 'public');
         }
-
-        // Crear registro de pago
-        $pago = $aporte->pagos()->create([
-            'monto' => $montoPago,
-            'fecha_pago' => $validated['fecha_pago'],
-            'metodo_pago' => $validated['metodo_pago'],
-            'comprobante' => $comprobantePath,
-            'observaciones' => $validated['observaciones'] ?? null,
-            'registrado_por' => auth()->id(),
-        ]);
 
         // Actualizar aporte
         $nuevoMontoPagado = $aporte->monto_pagado + $montoPago;
         $aporte->monto_pagado = $nuevoMontoPagado;
         $aporte->fecha_pago = $validated['fecha_pago'];
+        $aporte->metodo_pago = $validated['metodo_pago'];
+        $aporte->comprobante = $comprobantePath;
+        $aporte->observaciones = $validated['observaciones'] ?? $aporte->observaciones;
 
         // Determinar nuevo estado
         if ($nuevoMontoPagado >= ($aporte->monto + $aporte->monto_mora)) {

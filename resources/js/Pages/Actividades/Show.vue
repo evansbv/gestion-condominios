@@ -5,7 +5,7 @@
         <div class="flex justify-between items-start mb-6">
           <div>
             <h1 class="text-3xl font-bold text-gray-900">{{ actividad.titulo }}</h1>
-            <p class="mt-2 text-sm text-gray-600">{{ actividad.tipo.replace(/_/g, ' ') }}</p>
+            <p class="mt-2 text-sm text-gray-600">{{ actividad.tipo ? actividad.tipo.replace(/_/g, ' ') : 'Sin tipo' }}</p>
           </div>
           <div class="flex gap-2">
             <Button
@@ -36,7 +36,7 @@
                     'bg-red-100 text-red-800': actividad.estado === 'CANCELADA'
                   }"
                 >
-                  {{ actividad.estado.replace('_', ' ') }}
+                  {{ actividad.estado ? actividad.estado.replace('_', ' ') : 'Sin estado' }}
                 </span>
                 <div class="text-right">
                   <p class="text-sm text-gray-500">Avance</p>
@@ -82,8 +82,8 @@
                 </div>
                 <div>
                   <label class="text-sm font-medium text-gray-500">Saldo Presupuesto</label>
-                  <p class="text-xl font-semibold" :class="(actividad.presupuesto_aprobado - actividad.presupuesto_ejecutado) >= 0 ? 'text-green-600' : 'text-red-600'">
-                    Bs. {{ (actividad.presupuesto_aprobado - actividad.presupuesto_ejecutado).toFixed(2) }}
+                  <p class="text-xl font-semibold" :class="(Number(actividad.presupuesto_aprobado || 0) - Number(actividad.presupuesto_ejecutado || 0)) >= 0 ? 'text-green-600' : 'text-red-600'">
+                    Bs. {{ (Number(actividad.presupuesto_aprobado || 0) - Number(actividad.presupuesto_ejecutado || 0)).toFixed(2) }}
                   </p>
                 </div>
                 <div>
@@ -163,16 +163,16 @@
               <div class="space-y-4">
                 <div class="bg-blue-50 rounded-lg p-4">
                   <p class="text-xs text-blue-600 font-medium uppercase">Total Recaudado</p>
-                  <p class="text-2xl font-bold text-blue-900">Bs. {{ actividad.total_recaudado?.toFixed(2) || '0.00' }}</p>
+                  <p class="text-2xl font-bold text-blue-900">Bs. {{ Number(actividad.total_recaudado || 0).toFixed(2) }}</p>
                 </div>
                 <div class="bg-red-50 rounded-lg p-4">
                   <p class="text-xs text-red-600 font-medium uppercase">Total Pendiente</p>
-                  <p class="text-2xl font-bold text-red-900">Bs. {{ actividad.total_pendiente?.toFixed(2) || '0.00' }}</p>
+                  <p class="text-2xl font-bold text-red-900">Bs. {{ Number(actividad.total_pendiente || 0).toFixed(2) }}</p>
                 </div>
                 <div class="border-t-2 border-gray-200 pt-4">
                   <p class="text-xs text-gray-600 font-medium uppercase">Total Esperado</p>
                   <p class="text-2xl font-bold text-gray-900">
-                    Bs. {{ ((actividad.total_recaudado || 0) + (actividad.total_pendiente || 0)).toFixed(2) }}
+                    Bs. {{ (Number(actividad.total_recaudado || 0) + Number(actividad.total_pendiente || 0)).toFixed(2) }}
                   </p>
                 </div>
               </div>

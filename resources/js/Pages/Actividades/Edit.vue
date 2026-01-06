@@ -180,21 +180,23 @@ const props = defineProps({
 })
 
 const form = useForm({
-  reunion_id: props.actividad.reunion_id || '',
-  titulo: props.actividad.titulo,
-  descripcion: props.actividad.descripcion,
-  tipo: props.actividad.tipo,
-  fecha_inicio: props.actividad.fecha_inicio,
-  fecha_fin: props.actividad.fecha_fin,
-  presupuesto_aprobado: props.actividad.presupuesto_aprobado,
-  presupuesto_ejecutado: props.actividad.presupuesto_ejecutado,
-  estado: props.actividad.estado,
-  porcentaje_avance: props.actividad.porcentaje_avance,
-  responsable_id: props.actividad.responsable_id || '',
-  observaciones: props.actividad.observaciones || ''
+  reunion_id: props.actividad?.reunion_id || '',
+  titulo: props.actividad?.titulo || '',
+  descripcion: props.actividad?.descripcion || '',
+  tipo: props.actividad?.tipo || '',
+  fecha_inicio: props.actividad?.fecha_inicio || '',
+  fecha_fin: props.actividad?.fecha_fin || '',
+  presupuesto_aprobado: props.actividad?.presupuesto_aprobado || '',
+  presupuesto_ejecutado: props.actividad?.presupuesto_ejecutado || '',
+  estado: props.actividad?.estado || 'PLANIFICADA',
+  porcentaje_avance: props.actividad?.porcentaje_avance || 0,
+  responsable_id: props.actividad?.responsable_id || '',
+  observaciones: props.actividad?.observaciones || ''
 })
 
 const submit = () => {
-  form.put(route('actividades.update', props.actividad.id))
+  if (props.actividad?.id) {
+    form.put(route('actividades.update', props.actividad.id))
+  }
 }
 </script>

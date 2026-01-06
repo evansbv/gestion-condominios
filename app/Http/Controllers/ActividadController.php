@@ -120,23 +120,23 @@ class ActividadController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Actividad $actividad)
+    public function show(Actividad $actividade)
     {
-        $actividad->load(['responsable', 'reunion', 'aportes.vivienda']);
+        $actividade->load(['responsable', 'reunion', 'aportes.vivienda']);
 
         // Calcular estadísticas
-        $actividad->total_recaudado = $actividad->totalRecaudado;
-        $actividad->total_pendiente = $actividad->totalPendiente;
+        $actividade->total_recaudado = $actividade->totalRecaudado;
+        $actividade->total_pendiente = $actividade->totalPendiente;
 
         return Inertia::render('Actividades/Show', [
-            'actividad' => $actividad
+            'actividad' => $actividade
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Actividad $actividad)
+    public function edit(Actividad $actividade)
     {
         $reuniones = Reunion::where('estado', 'REALIZADA')
             ->orderBy('fecha_reunion', 'desc')
@@ -147,7 +147,21 @@ class ActividadController extends Controller
             ->get();
 
         return Inertia::render('Actividades/Edit', [
-            'actividad' => $actividad,
+            'actividad' => [
+                'id' => $actividade->id,
+                'reunion_id' => $actividade->reunion_id,
+                'titulo' => $actividade->titulo,
+                'descripcion' => $actividade->descripcion,
+                'tipo' => $actividade->tipo,
+                'fecha_inicio' => $actividade->fecha_inicio ? $actividade->fecha_inicio->format('Y-m-d') : '',
+                'fecha_fin' => $actividade->fecha_fin ? $actividade->fecha_fin->format('Y-m-d') : '',
+                'presupuesto_aprobado' => $actividade->presupuesto_aprobado,
+                'presupuesto_ejecutado' => $actividade->presupuesto_ejecutado,
+                'estado' => $actividade->estado,
+                'porcentaje_avance' => $actividade->porcentaje_avance,
+                'responsable_id' => $actividade->responsable_id,
+                'observaciones' => $actividade->observaciones,
+            ],
             'reuniones' => $reuniones,
             'usuarios' => $usuarios
         ]);
@@ -156,7 +170,7 @@ class ActividadController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Actividad $actividad)
+    public function update(Request $request, Actividad $actividade)
     {
         $validated = $request->validate([
             'reunion_id' => 'nullable|exists:reuniones,id',
@@ -173,7 +187,7 @@ class ActividadController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        $actividad->update($validated);
+        $actividade->update($validated);
 
         return redirect()->route('actividades.index')
             ->with('success', 'Actividad actualizada exitosamente.');
@@ -182,10 +196,10 @@ class ActividadController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Actividad $actividad)
+    public function destroy(Actividad $actividade)
     {
         // Verificar que no tenga aportes pagados
-        $aportesPagados = $actividad->aportes()->where('estado', 'PAGADO')->count();
+        $aportesPagados = $actividade->aportes()->where('estado', 'PAGADO')->count();
 
         if ($aportesPagados > 0) {
             return back()->withErrors([
@@ -194,10 +208,10 @@ class ActividadController extends Controller
         }
 
         // Eliminar aportes pendientes
-        $actividad->aportes()->delete();
+        $actividade->aportes()->delete();
 
         // Eliminar actividad
-        $actividad->delete();
+        $actividade->delete();
 
         return redirect()->route('actividades.index')
             ->with('success', 'Actividad eliminada exitosamente.');

@@ -116,40 +116,36 @@
               </div>
             </Card>
 
-            <Card title="Historial de Pagos">
-              <div v-if="aporte.pagos && aporte.pagos.length > 0">
-                <div class="space-y-4">
-                  <div
-                    v-for="pago in aporte.pagos"
-                    :key="pago.id"
-                    class="border border-gray-200 rounded-lg p-4"
-                  >
-                    <div class="flex justify-between items-start mb-3">
-                      <div>
-                        <p class="text-lg font-semibold text-gray-900">Bs. {{ pago.monto }}</p>
-                        <p class="text-sm text-gray-600">
-                          {{ new Date(pago.fecha_pago).toLocaleDateString('es-BO', { day: 'numeric', month: 'long', year: 'numeric' }) }}
-                        </p>
-                      </div>
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                        {{ pago.metodo_pago }}
-                      </span>
+            <Card title="Información de Pago">
+              <div v-if="aporte.monto_pagado > 0">
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex justify-between items-start mb-3">
+                    <div>
+                      <p class="text-sm text-gray-600">Monto Pagado</p>
+                      <p class="text-lg font-semibold text-gray-900">Bs. {{ Number(aporte.monto_pagado || 0).toFixed(2) }}</p>
+                      <p v-if="aporte.fecha_pago" class="text-sm text-gray-600 mt-1">
+                        {{ new Date(aporte.fecha_pago).toLocaleDateString('es-BO', { day: 'numeric', month: 'long', year: 'numeric' }) }}
+                      </p>
                     </div>
-                    <div v-if="pago.observaciones" class="text-sm text-gray-600 mb-2">
-                      {{ pago.observaciones }}
-                    </div>
-                    <div v-if="pago.comprobante" class="mt-2">
-                      <a
-                        :href="`/storage/${pago.comprobante}`"
-                        target="_blank"
-                        class="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center"
-                      >
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Ver Comprobante
-                      </a>
-                    </div>
+                    <span v-if="aporte.metodo_pago" class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                      {{ aporte.metodo_pago }}
+                    </span>
+                  </div>
+                  <div v-if="aporte.observaciones" class="text-sm text-gray-600 mb-2">
+                    <p class="font-medium">Observaciones:</p>
+                    <p>{{ aporte.observaciones }}</p>
+                  </div>
+                  <div v-if="aporte.comprobante" class="mt-2">
+                    <a
+                      :href="`/storage/${aporte.comprobante}`"
+                      target="_blank"
+                      class="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center"
+                    >
+                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Ver Comprobante
+                    </a>
                   </div>
                 </div>
               </div>
