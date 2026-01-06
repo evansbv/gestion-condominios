@@ -7,6 +7,7 @@
         <title inertia>{{ config('app.name', 'Gestión de Condominios') }}</title>
 
         <!-- Styles -->
+        @routes
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @inertiaHead
     </head>

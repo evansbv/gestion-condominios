@@ -14,6 +14,14 @@
                 <p class="text-gray-600 mb-6">
                     Este sistema permite gestionar residentes, viviendas, reuniones, actividades, aportes y comunicaciones del condominio.
                 </p>
+                <div class="mb-8">
+                    <Link
+                        :href="route('login')"
+                        class="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+                    >
+                        Iniciar Sesión
+                    </Link>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
                     <div class="p-4 bg-blue-50 rounded-lg">
                         <h3 class="font-semibold text-blue-900 mb-2">Gestión de Residentes</h3>
@@ -34,5 +42,7 @@
 </template>
 
 <script setup>
+import { Link } from '@inertiajs/vue3';
+
 // Página de bienvenida del sistema
 </script>
