@@ -51,15 +51,7 @@ class Residente extends Model
     }
 
     /**
-     * Relación con participaciones en reuniones
-     */
-    public function participacionesReuniones()
-    {
-        return $this->hasMany(ParticipanteReunion::class);
-    }
-
-    /**
-     * Relación muchos a muchos con reuniones
+     * Relación muchos a muchos con reuniones (participaciones)
      */
     public function reuniones()
     {

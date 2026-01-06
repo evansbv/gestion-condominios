@@ -43,17 +43,9 @@ class Reunion extends Model
     }
 
     /**
-     * Relación con participantes
+     * Relación muchos a muchos con residentes (participantes)
      */
     public function participantes()
-    {
-        return $this->hasMany(ParticipanteReunion::class);
-    }
-
-    /**
-     * Relación muchos a muchos con residentes
-     */
-    public function residentes()
     {
         return $this->belongsToMany(Residente::class, 'participantes_reunion')
             ->withPivot('asistio', 'representado_por', 'observaciones')

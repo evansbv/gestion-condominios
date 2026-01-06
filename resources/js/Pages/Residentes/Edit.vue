@@ -97,11 +97,11 @@
             </div>
 
             <div class="mt-4">
-              <div v-if="residente.fotografia" class="mb-3">
+              <div v-if="residente?.fotografia" class="mb-3">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Fotografía Actual</label>
                 <img
                   :src="`/storage/${residente.fotografia}`"
-                  :alt="residente.nombres"
+                  :alt="residente?.nombres || 'Fotografía'"
                   class="h-32 w-32 rounded-lg object-cover"
                 />
               </div>
@@ -180,25 +180,36 @@ const props = defineProps({
   viviendas: Array
 })
 
+// Formatear fecha para input date
+const formatFechaParaDate = (fecha) => {
+  if (!fecha) return ''
+  const date = new Date(fecha)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 const form = useForm({
-  email: props.residente.user.email,
+  _method: 'PUT',
+  email: props.residente?.user?.email || '',
   password: '',
-  nombre_completo: props.residente.user.name,
-  vivienda_id: props.residente.vivienda_id,
-  nombres: props.residente.nombres,
-  apellido_paterno: props.residente.apellido_paterno,
-  apellido_materno: props.residente.apellido_materno,
-  ci: props.residente.ci,
-  fecha_nacimiento: props.residente.fecha_nacimiento,
-  telefono: props.residente.telefono,
-  celular: props.residente.celular,
+  nombre_completo: props.residente?.user?.name || '',
+  vivienda_id: props.residente?.vivienda_id || '',
+  nombres: props.residente?.nombres || '',
+  apellido_paterno: props.residente?.apellido_paterno || '',
+  apellido_materno: props.residente?.apellido_materno || '',
+  ci: props.residente?.ci || '',
+  fecha_nacimiento: formatFechaParaDate(props.residente?.fecha_nacimiento) || '',
+  telefono: props.residente?.telefono || '',
+  celular: props.residente?.celular || '',
   fotografia: null,
-  tipo_residente: props.residente.tipo_residente
+  tipo_residente: props.residente?.tipo_residente || ''
 })
 
 const submit = () => {
   form.post(route('residentes.update', props.residente.id), {
-    _method: 'put'
+    forceFormData: true
   })
 }
 </script>

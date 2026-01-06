@@ -103,6 +103,7 @@ class ComunicacionController extends Controller
             'tipo' => 'required|in:COMUNICADO,CONVOCATORIA,QUEJA,RECOMENDACION',
             'asunto' => 'required|string|max:200',
             'contenido' => 'required|string',
+            'fecha_envio' => 'nullable|date',
             'prioridad' => 'required|in:BAJA,MEDIA,ALTA,URGENTE',
             'archivo_adjunto' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
             'destinatarios' => 'required|array|min:1',
@@ -119,7 +120,7 @@ class ComunicacionController extends Controller
 
         // Determinar estado
         $estado = $request->boolean('guardar_como_borrador') ? 'BORRADOR' : 'ENVIADO';
-        $fechaEnvio = $estado === 'ENVIADO' ? now() : null;
+        $fechaEnvio = $estado === 'ENVIADO' ? ($validated['fecha_envio'] ?? now()) : null;
 
         // Crear comunicación
         $comunicacion = Comunicacion::create([
@@ -250,10 +251,13 @@ class ComunicacionController extends Controller
             'tipo' => 'required|in:COMUNICADO,CONVOCATORIA,QUEJA,RECOMENDACION',
             'asunto' => 'required|string|max:200',
             'contenido' => 'required|string',
+            'fecha_envio' => 'nullable|date',
             'prioridad' => 'required|in:BAJA,MEDIA,ALTA,URGENTE',
             'archivo_adjunto' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
             'destinatarios' => 'required|array|min:1',
             'destinatarios.*' => 'exists:users,id',
+            'enviar_email' => 'boolean',
+            'guardar_como_borrador' => 'boolean',
         ]);
 
         // Manejar archivo adjunto si existe
@@ -265,6 +269,10 @@ class ComunicacionController extends Controller
             $validated['archivo_adjunto'] = $request->file('archivo_adjunto')->store('comunicaciones', 'public');
         }
 
+        // Determinar estado y fecha
+        $estado = $request->boolean('guardar_como_borrador') ? 'BORRADOR' : 'ENVIADO';
+        $fechaEnvio = $estado === 'ENVIADO' ? ($validated['fecha_envio'] ?? now()) : null;
+
         // Actualizar comunicación
         $comunicacion->update([
             'tipo' => $validated['tipo'],
@@ -272,6 +280,8 @@ class ComunicacionController extends Controller
             'contenido' => $validated['contenido'],
             'prioridad' => $validated['prioridad'],
             'archivo_adjunto' => $validated['archivo_adjunto'] ?? $comunicacion->archivo_adjunto,
+            'estado' => $estado,
+            'fecha_envio' => $fechaEnvio,
         ]);
 
         // Actualizar destinatarios
@@ -281,8 +291,16 @@ class ComunicacionController extends Controller
             })
         );
 
+        // Enviar por email si se solicita y se está enviando (no es borrador)
+        if ($request->boolean('enviar_email') && $estado === 'ENVIADO') {
+            $emails = User::whereIn('id', $validated['destinatarios'])->pluck('email')->toArray();
+            $this->emailService->enviarComunicacion($comunicacion, $emails);
+            $comunicacion->update(['enviado_por_email' => true]);
+        }
+
+        $mensaje = $estado === 'ENVIADO' ? 'Comunicación enviada exitosamente.' : 'Cambios guardados exitosamente.';
         return redirect()->route('comunicaciones.index')
-            ->with('success', 'Comunicación actualizada exitosamente.');
+            ->with('success', $mensaje);
     }
 
     /**

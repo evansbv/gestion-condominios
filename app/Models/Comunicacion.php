@@ -15,6 +15,7 @@ class Comunicacion extends Model
         'tipo',
         'asunto',
         'contenido',
+        'archivo_adjunto',
         'remitente_id',
         'fecha_envio',
         'prioridad',

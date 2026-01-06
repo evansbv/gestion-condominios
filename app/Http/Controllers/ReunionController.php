@@ -40,12 +40,12 @@ class ReunionController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        // Agregar información adicional        
+        // Agregar información adicional
         $reuniones->getCollection()->transform(function ($reunion) {
-            $reunion->total_participantes = $reunion->participantes()->count();
-            $reunion->participantes_asistieron = $reunion->participantes()
-                ->wherePivot('asistio', true)
-                ->count();
+            $reunion->total_participantes = $reunion->participantes->count();
+            $reunion->participantes_asistieron = $reunion->participantes->filter(function ($participante) {
+                return $participante->pivot->asistio === true;
+            })->count();
             return $reunion;
         });
         
@@ -108,49 +108,49 @@ class ReunionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Reunion $reunion)
+    public function show(Reunion $reunione)
     {
-        $reunion->load([
+        $reunione->load([
             'convocante',
-            'participantes.residente.vivienda',
+            'participantes.vivienda',
             'actividades'
         ]);
 
         // Contar participación
-        $reunion->total_convocados = $reunion->participantes()->count();
-        $reunion->total_asistieron = $reunion->participantes()
-            ->wherePivot('asistio', true)
-            ->count();
+        $reunione->total_convocados = $reunione->participantes->count();
+        $reunione->total_asistieron = $reunione->participantes->filter(function ($participante) {
+            return $participante->pivot->asistio === true;
+        })->count();
 
         return Inertia::render('Reuniones/Show', [
-            'reunion' => $reunion
+            'reunion' => $reunione
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Reunion $reunion)
+    public function edit(Reunion $reunione)
     {
         // No permitir editar reuniones ya realizadas
-        if ($reunion->estado === 'REALIZADA') {
+        if ($reunione->estado === 'REALIZADA') {
             return back()->withErrors([
                 'error' => 'No se puede editar una reunión que ya fue realizada.'
             ]);
         }
 
         return Inertia::render('Reuniones/Edit', [
-            'reunion' => $reunion
+            'reunion' => $reunione
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Reunion $reunion)
+    public function update(Request $request, Reunion $reunione)
     {
         // No permitir editar reuniones ya realizadas
-        if ($reunion->estado === 'REALIZADA') {
+        if ($reunione->estado === 'REALIZADA') {
             return back()->withErrors([
                 'error' => 'No se puede editar una reunión que ya fue realizada.'
             ]);
@@ -166,7 +166,7 @@ class ReunionController extends Controller
             'estado' => 'required|in:CONVOCADA,REALIZADA,CANCELADA',
         ]);
 
-        $reunion->update($validated);
+        $reunione->update($validated);
 
         return redirect()->route('reuniones.index')
             ->with('success', 'Reunión actualizada exitosamente.');
@@ -175,20 +175,20 @@ class ReunionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Reunion $reunion)
+    public function destroy(Reunion $reunione)
     {
         // No permitir eliminar reuniones realizadas
-        if ($reunion->estado === 'REALIZADA') {
+        if ($reunione->estado === 'REALIZADA') {
             return back()->withErrors([
                 'error' => 'No se puede eliminar una reunión que ya fue realizada.'
             ]);
         }
 
         // Eliminar participaciones
-        $reunion->participantes()->detach();
+        $reunione->participantes()->detach();
 
         // Eliminar reunión
-        $reunion->delete();
+        $reunione->delete();
 
         return redirect()->route('reuniones.index')
             ->with('success', 'Reunión eliminada exitosamente.');
@@ -217,7 +217,8 @@ class ReunionController extends Controller
 
         $reunion->participantes()->sync($participantes);
 
-        return back()->with('success', 'Participación registrada exitosamente.');
+        return redirect()->route('reuniones.show', $reunion->id)
+            ->with('success', 'Participación registrada exitosamente.');
     }
 
     /**
@@ -239,7 +240,7 @@ class ReunionController extends Controller
             'estado' => 'REALIZADA',
         ]);
 
-        return redirect()->route('reuniones.show', $reunion)
+        return redirect()->route('reuniones.show', $reunion->id)
             ->with('success', 'Acta registrada exitosamente.');
     }
 
@@ -268,7 +269,7 @@ class ReunionController extends Controller
      */
     public function participantes(Reunion $reunion)
     {
-        $reunion->load(['participantes.residente.vivienda']);
+        $reunion->load(['participantes.vivienda']);
 
         // Obtener todos los residentes activos
         $residentes = Residente::with('vivienda')
@@ -300,7 +301,7 @@ class ReunionController extends Controller
      */
     public function acta(Reunion $reunion)
     {
-        $reunion->load(['participantes.residente.vivienda', 'convocante']);
+        $reunion->load(['participantes.vivienda', 'convocante']);
 
         // Obtener usuarios que pueden ser responsables de acuerdos
         $responsables = User::whereIn('rol', ['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'])

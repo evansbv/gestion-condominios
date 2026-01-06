@@ -137,31 +137,31 @@
             </Card>
 
             <Card title="Participación en Reuniones">
-              <div v-if="residente.participaciones_reuniones && residente.participaciones_reuniones.length > 0">
+              <div v-if="residente.reuniones && residente.reuniones.length > 0">
                 <div class="space-y-3">
                   <div
-                    v-for="participacion in residente.participaciones_reuniones"
-                    :key="participacion.id"
+                    v-for="reunion in residente.reuniones"
+                    :key="reunion.id"
                     class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
                   >
                     <div class="flex justify-between items-start">
                       <div class="flex-1">
-                        <h4 class="font-medium text-gray-900">{{ participacion.reunion.titulo }}</h4>
+                        <h4 class="font-medium text-gray-900">{{ reunion.titulo }}</h4>
                         <p class="text-sm text-gray-600 mt-1">
-                          Fecha: {{ new Date(participacion.reunion.fecha_reunion).toLocaleDateString('es-BO') }}
+                          Fecha: {{ reunion.fecha_reunion ? new Date(reunion.fecha_reunion).toLocaleDateString('es-BO') : 'N/A' }}
                         </p>
                         <p class="text-sm text-gray-600">
-                          Lugar: {{ participacion.reunion.lugar }}
+                          Lugar: {{ reunion.lugar || 'N/A' }}
                         </p>
-                        <p v-if="participacion.pivot.observaciones" class="text-sm text-gray-600 mt-2">
-                          Observaciones: {{ participacion.pivot.observaciones }}
+                        <p v-if="reunion.pivot?.observaciones" class="text-sm text-gray-600 mt-2">
+                          Observaciones: {{ reunion.pivot.observaciones }}
                         </p>
                       </div>
                       <span
                         class="px-2 py-1 text-xs font-semibold rounded-full"
-                        :class="participacion.pivot.asistio ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                        :class="reunion.pivot?.asistio ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
                       >
-                        {{ participacion.pivot.asistio ? 'Asistió' : 'No asistió' }}
+                        {{ reunion.pivot?.asistio ? 'Asistió' : 'No asistió' }}
                       </span>
                     </div>
                   </div>

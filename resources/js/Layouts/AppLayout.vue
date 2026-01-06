@@ -7,7 +7,7 @@
                     <div class="flex">
                         <div class="flex-shrink-0 flex items-center">
                             <h1 class="text-xl font-bold text-gray-900">
-                                Gestión de Condominios
+                                Condominios
                             </h1>
                         </div>
                         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -48,6 +48,12 @@
                                 class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                             >
                                 Comunicaciones
+                            </Link>
+                            <Link
+                                :href="route('reuniones.index')"
+                                class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                            >
+                                Reuniones
                             </Link>
                         </div>
                     </div>

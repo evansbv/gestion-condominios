@@ -119,7 +119,7 @@ class ResidenteController extends Controller
      */
     public function show(Residente $residente)
     {
-        $residente->load(['user', 'vivienda', 'participacionesReuniones.reunion']);
+        $residente->load(['user', 'vivienda', 'reuniones']);
 
         return Inertia::render('Residentes/Show', [
             'residente' => $residente
