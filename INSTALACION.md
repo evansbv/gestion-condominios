@@ -12,9 +12,9 @@
 
 1. Crear la base de datos en PostgreSQL:
 ```sql
-CREATE DATABASE db_grupo30sa;
-CREATE USER grupo30sa WITH PASSWORD 'grup030grup030*';
-GRANT ALL PRIVILEGES ON DATABASE db_grupo30sa TO grupo30sa;
+CREATE DATABASE db_xxx;
+CREATE USER xxx WITH PASSWORD 'xxx*';
+GRANT ALL PRIVILEGES ON DATABASE db_xxx TO xxx;
 ```
 
 2. Verificar la conexión en el archivo `.env`:
@@ -22,9 +22,9 @@ GRANT ALL PRIVILEGES ON DATABASE db_grupo30sa TO grupo30sa;
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5432
-DB_DATABASE=db_grupo30sa
-DB_USERNAME=grupo30sa
-DB_PASSWORD=grup030grup030*
+DB_DATABASE=db_xxx
+DB_USERNAME=xxx
+DB_PASSWORD=xxx*
 ```
 
 ## Paso 2: Instalación de Dependencias

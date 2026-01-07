@@ -7,10 +7,10 @@ Sistema web completo para la administración integral de condominios residencial
 
 ### Base de Datos
 - **Host**: www.tecnoweb.org.bo
-- **Base de datos**: db_grupo30sa
-- **Usuario**: grupo30sa
-- **Contraseña**: grup030grup030*
-- **Motor**: PostgreSQL
+- **Base de datos**: db_xxx
+- **Usuario**: xxx
+- **Contraseña**: xxx*
+- **Motor**: xxx
 
 ### Correo Institucional
 - **Email**: condominio@tecnoweb.org.bo
@@ -223,4 +223,4 @@ Para reportar problemas o sugerencias, contactar al equipo de desarrollo.
 
 ## Licencia
 
-Propietario - Grupo30SA
+Propietario - Evans Balcazar Veizaga

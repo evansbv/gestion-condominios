@@ -375,5 +375,5 @@ El Sistema de Gestión de Condominios está **100% funcional** y listo para usar
 
 ---
 
-**Desarrollado para Tecnoweb - UMSA**
+**Desarrollado para Tecnoweb - UAGRM**
 **Sistema completo y funcional** ✅
