@@ -92,7 +92,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/comunicaciones', [ComunicacionController::class, 'index'])->name('comunicaciones.index');
 
     // Gestión de comunicaciones - ADMINISTRADOR y MIEMBRO_DIRECTORIO
-    Route::middleware('role:ADMINISTRADOR,MIEMBRO_DIRECTORIO')->group(function () {
+    Route::middleware('role:ADMINISTRADOR,MIEMBRO_DIRECTORIO,PROPIETARIO')->group(function () {
         Route::get('/comunicaciones/create', [ComunicacionController::class, 'create'])->name('comunicaciones.create');
         Route::post('/comunicaciones', [ComunicacionController::class, 'store'])->name('comunicaciones.store');
         Route::get('/comunicaciones/estadisticas/general', [ComunicacionController::class, 'estadisticas'])->name('comunicaciones.estadisticas');

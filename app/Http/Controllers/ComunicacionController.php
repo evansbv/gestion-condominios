@@ -26,7 +26,7 @@ class ComunicacionController extends Controller
         $user = auth()->user();
 
         // Admin y directorio ven todas, otros solo las enviadas a ellos
-        if (in_array($user->rol, ['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'])) {
+        if (in_array($user->rol, ['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO', ])) {
             $query = Comunicacion::with(['remitente', 'destinatarios']);
         } else {
             $query = Comunicacion::with(['remitente', 'destinatarios'])

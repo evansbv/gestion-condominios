@@ -8,7 +8,7 @@
             <p class="mt-2 text-sm text-gray-600">{{ actividad.tipo ? actividad.tipo.replace(/_/g, ' ') : 'Sin tipo' }}</p>
           </div>
           <div class="flex gap-2">
-            <Button
+            <Button v-if="isAdmin"
               variant="primary"
               @click="router.visit(route('actividades.edit', actividad.id))"
             >
@@ -242,5 +242,17 @@ import Card from '@/Components/Card.vue'
 
 const props = defineProps({
   actividad: Object
+})
+
+//validar si es admin
+import { computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
+// Usuario autenticado desde Inertia
+const page = usePage()
+const user = computed(() => page.props.auth?.user)
+
+// Computed correcto
+const isAdmin = computed(() => {
+    return user.value?.rol === 'ADMINISTRADOR'
 })
 </script>

@@ -10,14 +10,16 @@
               Convocada por {{ reunion.convocante?.name || 'N/A' }} el {{ formatDate(reunion.fecha_convocatoria) }}
             </p>
           </div>
-          <div class="flex gap-2">
-            <Button
+          <div v-if="isAdmin" class="flex gap-2">
+            <Button  
               v-if="reunion.estado !== 'REALIZADA'"
-              variant="secondary"
+              variant="primary"
               @click="router.visit(route('reuniones.edit', reunion.id))"
             >
               Editar
             </Button>
+          </div>
+          <div class="flex gap-2">
             <Button
               variant="ghost"
               @click="router.visit(route('reuniones.index'))"
@@ -123,8 +125,8 @@
           </div>
 
           <div v-if="reunion.estado !== 'CANCELADA'" class="mt-4 pt-4 border-t">
-            <Button
-              variant="secondary"
+            <Button v-if="isAdmin"
+              variant="primary"
               @click="router.visit(route('reuniones.participantes', reunion.id))"
             >
               Registrar Participantes
@@ -162,7 +164,7 @@
 
         <!-- Registrar Acta -->
         <div v-if="reunion.estado === 'CONVOCADA' && !reunion.acta" class="mt-4">
-          <Button
+          <Button v-if="isAdmin"
             variant="primary"
             @click="router.visit(route('reuniones.acta', reunion.id))"
           >
@@ -239,4 +241,16 @@ const getResponsableName = (responsableId) => {
   // For now, return the ID
   return `Usuario #${responsableId}`
 }
+
+//validar si es admin
+import { computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
+// Usuario autenticado desde Inertia
+const page = usePage()
+const user = computed(() => page.props.auth?.user)
+
+// Computed correcto
+const isAdmin = computed(() => {
+    return user.value?.rol === 'ADMINISTRADOR'
+})
 </script>

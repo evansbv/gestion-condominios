@@ -3,12 +3,13 @@
         <div class="space-y-6">
             <h1 class="text-3xl font-bold text-gray-900">Panel de Control</h1>
 
+            {{ user?.rol }}
             <!-- Estadísticas generales -->
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div v-if="isAdmin" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 <div class="bg-white overflow-hidden shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <dt class="text-sm font-medium text-gray-500 truncate">
-                            Total Viviendas
+                            Total Viviendas 
                         </dt>
                         <dd class="mt-1 text-3xl font-semibold text-gray-900">
                             {{ estadisticas.total_viviendas }}
@@ -51,7 +52,7 @@
             </div>
 
             <!-- Estadísticas de mora -->
-            <div class="bg-white shadow rounded-lg p-6">
+            <div v-if="isAdmin" class="bg-white shadow rounded-lg p-6">
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Estado de Aportes</h2>
                 <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
                     <div>
@@ -143,6 +144,7 @@
 </template>
 
 <script setup>
+
 import AppLayout from '@/Layouts/AppLayout.vue';
 
 defineProps({
@@ -153,4 +155,16 @@ defineProps({
     actividadesRecientes: Array,
     datosVivienda: Object,
 });
+
+//validar si es admin
+import { computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
+// Usuario autenticado desde Inertia
+const page = usePage()
+const user = computed(() => page.props.auth?.user)
+
+// Computed correcto
+const isAdmin = computed(() => {
+    return user.value?.rol === 'ADMINISTRADOR'
+})
 </script>
