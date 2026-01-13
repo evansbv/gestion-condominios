@@ -5,7 +5,7 @@
         <div class="flex justify-between items-center mb-6">
           <h1 class="text-3xl font-bold text-gray-900">Residentes</h1>
           <Button
-            v-if="canCreate"
+             v-if="isAdmin"
             @click="router.visit(route('residentes.create'))"
             variant="primary"
           >
@@ -92,7 +92,7 @@
                   <td class="px-6 py-4 whitespace-nowrap">
                     <img
                       v-if="residente.fotografia"
-                      :src="`/storage/${residente.fotografia}`"
+                      :src="`/urbalemana/gestion-condominios/public/storage/${residente.fotografia}`"
                       :alt="residente.nombres"
                       class="h-10 w-10 rounded-full object-cover"
                     />
@@ -255,4 +255,17 @@ const deleteResidente = () => {
     }
   })
 }
+
+
+//validar si es admin
+import { computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
+// Usuario autenticado desde Inertia
+const page = usePage()
+const user = computed(() => page.props.auth?.user)
+
+// Computed correcto
+const isAdmin = computed(() => {
+    return user.value?.rol === 'ADMINISTRADOR'
+})
 </script>

@@ -55,32 +55,51 @@
                 hint="Describa detalladamente lo acontecido en la reunión, los puntos discutidos, decisiones tomadas, etc."
                 placeholder="ACTA DE REUNIÓN
 
-En la ciudad de Santa Cruz de la Sierra,  siendo las 20:00 horas, se llevó a cabo la reunión Reunión Ordinaria - Febrero 2026 en la Casa de Luis Enrique Justiniano.
+En la ciudad de Santa Cruz de la Sierra,  siendo las 20:00 horas, se llevó a cabo la reunión Reunión Ordinaria - Enero 2026 en la Casa del Vecino Luis Enrique Justiniano.
 
-Actuó como presidente de la reunión el Señor Benjamin Galindo y como secretario(a) Luis Enrique Justiniano, quien suscribe la presente acta.
+Actuó como presidente de la reunión el Vecino Benjamin Galindo y como secretario(a) el Vecino Luis Enrique Justiniano, quien suscribe la presente acta.
+
 El Orden del dia fue aprobado sin modificacion:
 
 1. Verificación de quórum
-2. Aprobación de actividades
-3. Lectura de correspondencia
-4. Varios
+2. Lectura de acta anterior(Diciembre)
+3. Lectura de Correspondencia
+4. Aprobación de actividades(Enero)
+5. Varios
 
 DESARROLLO DE LA REUNIÓN
 
-La reunión dio inicio con la verificación del quórum correspondiente, procediéndose posteriormente al tratamiento de los puntos establecidos en el orden del día:
+1. La reunión dio inicio con la verificación del quórum correspondiente, procediéndose posteriormente al tratamiento de los puntos establecidos en el orden del día.
 
-Lectura del Acta Anterior de fecha 12-12-2025
+2. Lectura del Acta Anterior (Diciembre) de fecha  12-12-2025
 se aprobo sin observaciones
 
-se dio lectura a las correspondencia
+3. se dio lectura a las correspondencia
 ....
 Se expuso y analizó ______________________________________
+y se tomaron en cuenta las que beneficia a la urbanizacion.
 
-se procedio con los puntos varios
+4. Se procedio con la Aprobación de actividades(Enero)
 ....
-Se expuso y analizó ______________________________________
+Se expuso y analizó y se consideraron las siguientes:
+a) Limpiza de Aceras ______________________________________
+b) Contactarse con los propietarios de Terrenos ___________.
+cada actividad tendra un vecino encargado.
+
+5. se procedio con los puntos varios
+....
+Se expuso y analizó ______________________________________.
+En este punto se decidio considerar en la siguiene reunion.
 
 No habiendo más asuntos que tratar, se dio por concluida la reunión a horas 23:00, del mismo día, en señal de conformidad se firma la presente acta para constancia y efectos legales que correspondan.
+
+
+Benjamin Galindo
+Presidente
+
+
+Luis Enrique Justiniano
+Secretario
 "
               />
             </div>

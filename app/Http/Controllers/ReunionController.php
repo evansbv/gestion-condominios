@@ -110,6 +110,7 @@ class ReunionController extends Controller
      */
     public function show(Reunion $reunione)
     {
+        //dd($reunione);
         $reunione->load([
             'convocante',
             'participantes.vivienda',
@@ -199,6 +200,7 @@ class ReunionController extends Controller
      */
     public function registrarParticipacion(Request $request, Reunion $reunion)
     {
+        
         $validated = $request->validate([
             'participantes' => 'required|array',
             'participantes.*.residente_id' => 'required|exists:residentes,id',
@@ -269,6 +271,7 @@ class ReunionController extends Controller
      */
     public function participantes(Reunion $reunion)
     {
+        
         $reunion->load(['participantes.vivienda']);
 
         // Obtener todos los residentes activos
@@ -276,6 +279,7 @@ class ReunionController extends Controller
             ->where('activo', true)
             ->whereIn('tipo_residente', ['PROPIETARIO', 'INQUILINO'])
             ->get();
+        
 
         // Marcar quienes ya están registrados
         $residentes->transform(function ($residente) use ($reunion) {

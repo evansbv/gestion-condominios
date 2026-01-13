@@ -137,7 +137,7 @@
                   </div>
                   <div v-if="aporte.comprobante" class="mt-2">
                     <a
-                      :href="`/storage/${aporte.comprobante}`"
+                      :href="`/urbalemana/gestion-condominios/public/storage/${aporte.comprobante}`"
                       target="_blank"
                       class="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center"
                     >

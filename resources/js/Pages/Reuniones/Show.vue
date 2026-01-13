@@ -95,11 +95,12 @@
             >
               <div class="flex-1">
                 <p class="font-medium text-gray-900">
-                  {{ participante.nombres }} {{ participante.apellidos }}
+                  {{ participante.nombres }} {{ participante.apellido_paterno }} {{ participante.apellido_materno }}
                 </p>
                 <p class="text-sm text-gray-600">
-                  Vivienda: {{ participante.vivienda?.numero_vivienda || 'N/A' }}
+                  Vivienda: {{ participante.vivienda?.numero }} {{ participante.vivienda?.direccion || 'N/A' }}
                 </p>
+                
                 <p v-if="participante.pivot?.observaciones" class="text-sm text-gray-500 mt-1">
                   {{ participante.pivot.observaciones }}
                 </p>
@@ -134,6 +135,26 @@
           </div>
         </Card>
 
+
+        <!-- Registrar Acta -->
+        <Card v-if="reunion.estado === 'CONVOCADA'" title="Acta de Reunion" class="mb-6">
+          <div v-if="reunion.participantes && reunion.participantes.length > 0" class="space-y-2">
+            
+            <div v-if="reunion.estado === 'CONVOCADA' && !reunion.acta" class="mt-4">
+              <Button v-if="isAdmin"
+                variant="primary"
+                @click="router.visit(route('reuniones.acta', reunion.id))"
+              >
+                Registrar Acta
+              </Button>
+              <div v-else class="text-center py-8 text-gray-500">
+                No se ha redactado el acta de la reunión.
+              </div>
+            </div>          
+
+          </div>
+        </Card>
+
         <!-- Acta -->
         <Card v-if="reunion.estado === 'REALIZADA' && reunion.acta" title="Acta de la Reunión" class="mb-6">
           <div class="prose max-w-none">
@@ -161,16 +182,6 @@
             </div>
           </div>
         </Card>
-
-        <!-- Registrar Acta -->
-        <div v-if="reunion.estado === 'CONVOCADA' && !reunion.acta" class="mt-4">
-          <Button v-if="isAdmin"
-            variant="primary"
-            @click="router.visit(route('reuniones.acta', reunion.id))"
-          >
-            Registrar Acta
-          </Button>
-        </div>
 
         <!-- Actividades Relacionadas -->
         <Card v-if="reunion.actividades && reunion.actividades.length > 0" title="Actividades Relacionadas" class="mb-6">

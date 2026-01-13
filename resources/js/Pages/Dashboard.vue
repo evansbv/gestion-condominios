@@ -131,10 +131,12 @@
                             v-for="comunicacion in ultimasComunicaciones"
                             :key="comunicacion.id"
                             class="border-l-4 border-green-500 pl-3"
+                            @click="router.visit(route('comunicaciones.show', comunicacion.id))"
                         >
-                            <p class="font-medium text-gray-900">{{ comunicacion.asunto }}</p>
+                            <p lass="font-medium text-gray-900">{{ comunicacion.asunto }}</p>
                             <p class="text-sm text-gray-600">{{ comunicacion.tipo }}</p>
                         </div>
+                        
                     </div>
                     <p v-else class="text-gray-500">No hay comunicaciones recientes</p>
                 </div>
@@ -146,6 +148,7 @@
 <script setup>
 
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { router } from '@inertiajs/vue3';
 
 defineProps({
     estadisticas: Object,

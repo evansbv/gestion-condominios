@@ -248,6 +248,7 @@ class AporteController extends Controller
      */
     public function registrarPago(Request $request, Aporte $aporte)
     {
+        //dd($aporte);
         $validated = $request->validate([
             'monto_pago' => 'required|numeric|min:0.01',
             'fecha_pago' => 'required|date',
@@ -271,7 +272,7 @@ class AporteController extends Controller
                 'monto_pago' => 'El monto del pago no puede exceder el total adeudado (Bs. ' . number_format($totalAdeudado, 2) . ').'
             ]);
         }
-
+        //dd($aporte);
         // Manejar comprobante si existe
         $comprobantePath = $aporte->comprobante; // Mantener comprobante anterior si existe
         if ($request->hasFile('comprobante')) {

@@ -61,7 +61,7 @@
               <div v-if="comunicacion.archivo_adjunto" class="mt-6 pt-6 border-t border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900 mb-3">Archivo Adjunto</h3>
                 <a
-                  :href="`/storage/${comunicacion.archivo_adjunto}`"
+                  :href="`/urbalemana/gestion-condominios/public/storage/${comunicacion.archivo_adjunto}`"
                   target="_blank"
                   class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
                 >

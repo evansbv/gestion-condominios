@@ -21,35 +21,76 @@ class ViviendaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Vivienda::with(['residentes' => function($q) {
-            $q->where('activo', true);
-        }])->where('activo', true);
+        //dd(auth()->user()->rol);
+        //dd($request);
+        if(auth()->user()->rol!='PROPIETARIO'){   
+            $query = Vivienda::with(['residentes' => function($q) {
+                $q->where('activo', true);
+            }])->where('activo', true);
+            //dd($query);
+            // Búsqueda
+            if ($request->has('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('numero', 'like', "%{$search}%")
+                    ->orWhere('direccion', 'like', "%{$search}%");
+                });
+            }
 
-        // Búsqueda
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('numero', 'like', "%{$search}%")
-                  ->orWhere('direccion', 'like', "%{$search}%");
-            });
+            // Filtro por tipo
+            if ($request->has('tipo') && $request->tipo != 'TODOS') {
+                $query->where('tipo', $request->tipo);
+            }
+
+            // Vista de mapa o lista
+            $vistaMode = $request->get('vista', 'lista'); // 'lista' o 'mapa'
+
+            if ($vistaMode === 'mapa') {
+                // Para el mapa, traer todas las viviendas con coordenadas
+                $viviendas = $query->get();
+            } else {
+                // Para lista, usar paginación
+                $viviendas = $query->paginate(15)->withQueryString();
+            }
+            //dd($viviendas);
+        }else{
+            // Si es PROPIETARIO, mostrar solo su vivienda
+            $query = Vivienda::with(['residentes' => function($q) {
+                $q->where('activo', true);
+            }])->whereHas('residentes', function($q) {
+                $q->where('user_id', auth()->id())
+                  ->where('activo', true);
+            })->where('activo', true);
+            //dd($query);
+
+            // Búsqueda
+            if ($request->has('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('numero', 'like', "%{$search}%")
+                    ->orWhere('direccion', 'like', "%{$search}%");
+                });
+            }
+
+            // Filtro por tipo
+            if ($request->has('tipo') && $request->tipo != 'TODOS') {
+                $query->where('tipo', $request->tipo);
+            }
+
+            // Vista de mapa o lista
+            $vistaMode = $request->get('vista', 'lista'); // 'lista' o 'mapa'
+
+            if ($vistaMode === 'mapa') {
+                // Para el mapa, traer todas las viviendas con coordenadas
+                $viviendas = $query->get();
+            } else {
+                // Para lista, usar paginación
+                $viviendas = $query->paginate(15)->withQueryString();
+            }
+
+            $vistaMode = 'lista'; // Forzar vista de lista para propietarios
+            //dd($viviendas);
         }
-
-        // Filtro por tipo
-        if ($request->has('tipo') && $request->tipo != 'TODOS') {
-            $query->where('tipo', $request->tipo);
-        }
-
-        // Vista de mapa o lista
-        $vistaMode = $request->get('vista', 'lista'); // 'lista' o 'mapa'
-
-        if ($vistaMode === 'mapa') {
-            // Para el mapa, traer todas las viviendas con coordenadas
-            $viviendas = $query->get();
-        } else {
-            // Para lista, usar paginación
-            $viviendas = $query->paginate(15)->withQueryString();
-        }
-
         return Inertia::render('Viviendas/Index', [
             'viviendas' => $viviendas,
             'filters' => $request->only(['search', 'tipo']),

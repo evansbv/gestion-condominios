@@ -17,8 +17,15 @@ class ResidenteController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Residente::with(['user', 'vivienda'])
+        if(auth()->user()->rol === 'PROPIETARIO') {
+            $query = Residente::with(['user', 'vivienda'])
+            ->where('activo', true)
+            ->where('user_id', auth()->id());
+        }else{
+            $query = Residente::with(['user', 'vivienda'])
             ->where('activo', true);
+            
+        }
 
         // Búsqueda
         if ($request->has('search')) {

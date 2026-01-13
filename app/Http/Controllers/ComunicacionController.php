@@ -99,6 +99,7 @@ class ComunicacionController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request);
         $validated = $request->validate([
             'tipo' => 'required|in:COMUNICADO,CONVOCATORIA,QUEJA,RECOMENDACION',
             'asunto' => 'required|string|max:200',

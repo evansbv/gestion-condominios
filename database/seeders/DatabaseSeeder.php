@@ -37,82 +37,198 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $propietario1 = User::create([
-            'name' => 'María García',
-            'email' => 'maria@example.com',
-            'password' => Hash::make('propietario123'),
+            'name' => 'Amilcar Bruno Saavedra',
+            'email' => 'amilcar@gmail.com',
+            'password' => Hash::make('amilcar123*'),
             'rol' => 'PROPIETARIO',
             'activo' => true,
         ]);
 
         $propietario2 = User::create([
-            'name' => 'Carlos Rodríguez',
-            'email' => 'carlos@example.com',
-            'password' => Hash::make('propietario123'),
+            'name' => 'Benjamin Galindo Galindo',
+            'email' => 'benjamin@gmail.com',
+            'password' => Hash::make('benjamin123*'),
+            'rol' => 'PROPIETARIO',
+            'activo' => true,
+        ]);
+
+        $propietario3 = User::create([
+            'name' => 'Luis Enrique Justiniano Agreda',
+            'email' => 'luis@gmail.com',
+            'password' => Hash::make('luis123*'),
+            'rol' => 'PROPIETARIO',
+            'activo' => true,
+        ]);
+
+        $propietario4 = User::create([
+            'name' => 'Sergio Eduardo Ramos M.',
+            'email' => 'sergio@gmail.com',
+            'password' => Hash::make('sergio123*'),
+            'rol' => 'PROPIETARIO',
+            'activo' => true,
+        ]);
+
+        $propietario5 = User::create([
+            'name' => 'Evans Balcazar Veizaga',
+            'email' => 'evansbv@gmail.com',
+            'password' => Hash::make('evans123*'),
+            'rol' => 'PROPIETARIO',
+            'activo' => true,
+        ]);
+
+        $propietario6 = User::create([
+            'name' => 'Adalberto Ruiz Alvarez',
+            'email' => 'adalberto@gmail.com',
+            'password' => Hash::make('adalberto123*'),
             'rol' => 'PROPIETARIO',
             'activo' => true,
         ]);
 
         // Crear viviendas
         $vivienda1 = Vivienda::create([
-            'numero' => 'A-101',
-            'direccion' => 'Calle Principal #123',
-            'tipo' => 'DEPARTAMENTO',
-            'area_m2' => 85.50,
-            'latitud' => -16.5000,
-            'longitud' => -68.1500,
+            'numero' => 'Casa-101',
+            'direccion' => 'Calle #1 No. 101',
+            'tipo' => 'CASA',
+            'area_m2' => 380.00,
+            'latitud' => -17.710633,   
+            'longitud' => -63.139183,
             'numero_habitantes' => 4,
             'activo' => true,
         ]);
 
         $vivienda2 = Vivienda::create([
-            'numero' => 'A-102',
-            'direccion' => 'Calle Principal #125',
-            'tipo' => 'DEPARTAMENTO',
-            'area_m2' => 92.00,
-            'latitud' => -16.5001,
-            'longitud' => -68.1501,
-            'numero_habitantes' => 3,
+            'numero' => 'Casa-105',
+            'direccion' => 'Calle #1 No. 105',
+            'tipo' => 'CASA',
+            'area_m2' => 220.00,
+            'latitud' => -17.710633,   
+            'longitud' => -63.139183,
+            'numero_habitantes' => 7,
             'activo' => true,
         ]);
 
         $vivienda3 = Vivienda::create([
-            'numero' => 'B-201',
-            'direccion' => 'Calle Secundaria #456',
+            'numero' => 'Casa-108',
+            'direccion' => 'Calle #1 No. 108',
             'tipo' => 'CASA',
             'area_m2' => 120.00,
-            'latitud' => -16.5002,
-            'longitud' => -68.1502,
+            'latitud' => -17.710633,   
+            'longitud' => -63.139183,
             'numero_habitantes' => 5,
             'activo' => true,
         ]);
 
+        $vivienda4 = Vivienda::create([
+            'numero' => 'Casa-201',
+            'direccion' => 'Calle #2 No. 201',
+            'tipo' => 'CASA',
+            'area_m2' => 380.00,
+            'latitud' => -17.710887, 
+            'longitud' => -63.139005,
+            'numero_habitantes' => 5,
+            'activo' => true,
+        ]);
+
+        $vivienda5 = Vivienda::create([
+            'numero' => 'Casa-210',
+            'direccion' => 'Calle #2 No. 210',
+            'tipo' => 'CASA',
+            'area_m2' => 380.00,
+            'latitud' => -17.710887, 
+            'longitud' => -63.139005,
+            'numero_habitantes' => 5,
+            'activo' => true,
+        ]);
+
+        $vivienda6 = Vivienda::create([
+            'numero' => 'Casa-115',
+            'direccion' => 'Calle #2 No. 115',
+            'tipo' => 'CASA',
+            'area_m2' => 220.00,
+            'latitud' => -17.710633,   
+            'longitud' => -63.139183,
+            'numero_habitantes' => 7,
+            'activo' => true,
+        ]);
+
         // Crear residentes
-        Residente::create([
+        $residente1=Residente::create([
             'user_id' => $propietario1->id,
             'vivienda_id' => $vivienda1->id,
-            'nombres' => 'María',
-            'apellido_paterno' => 'García',
-            'apellido_materno' => 'López',
-            'ci' => '1234567',
+            'nombres' => 'Amilcar',
+            'apellido_paterno' => 'Bruno',
+            'apellido_materno' => 'Saavedra',
+            'ci' => '12345601',
             'fecha_nacimiento' => '1985-05-15',
-            'celular' => '71234567',
+            'celular' => '70012301',
             'tipo_residente' => 'PROPIETARIO',
             'activo' => true,
         ]);
 
-        Residente::create([
+        $residente2=Residente::create([
             'user_id' => $propietario2->id,
             'vivienda_id' => $vivienda2->id,
-            'nombres' => 'Carlos',
-            'apellido_paterno' => 'Rodríguez',
-            'apellido_materno' => 'Mamani',
-            'ci' => '7654321',
-            'fecha_nacimiento' => '1980-08-20',
-            'celular' => '79876543',
+            'nombres' => 'Luis Enrique',
+            'apellido_paterno' => 'Justiniano',
+            'apellido_materno' => 'Agreda',
+            'ci' => '12345602',
+            'fecha_nacimiento' => '1985-05-15',
+            'celular' => '70012302',
             'tipo_residente' => 'PROPIETARIO',
             'activo' => true,
         ]);
 
+        $residente3=Residente::create([
+            'user_id' => $propietario3->id,
+            'vivienda_id' => $vivienda3->id,
+            'nombres' => 'Sergio Eduardo',
+            'apellido_paterno' => 'Ramos',
+            'apellido_materno' => 'M',
+            'ci' => '12345603',
+            'fecha_nacimiento' => '1985-05-15',
+            'celular' => '70012303',
+            'tipo_residente' => 'PROPIETARIO',
+            'activo' => true,
+        ]);
+
+        $residente4=Residente::create([
+            'user_id' => $propietario4->id,
+            'vivienda_id' => $vivienda4->id,
+            'nombres' => 'Benjamin',
+            'apellido_paterno' => 'Galindo',
+            'apellido_materno' => 'Galindo',
+            'ci' => '12345604',
+            'fecha_nacimiento' => '1980-08-20',
+            'celular' => '70012304',
+            'tipo_residente' => 'PROPIETARIO',
+            'activo' => true,
+        ]);
+
+        $residente5=Residente::create([
+            'user_id' => $propietario5->id,
+            'vivienda_id' => $vivienda5->id,
+            'nombres' => 'Evans',
+            'apellido_paterno' => 'Balcazar',
+            'apellido_materno' => 'Veizaga',
+            'ci' => '3924689',
+            'fecha_nacimiento' => '1975-08-29',
+            'celular' => '72107856',
+            'tipo_residente' => 'PROPIETARIO',
+            'activo' => true,
+        ]);
+        $residente6=Residente::create([
+            'user_id' => $propietario6->id,
+            'vivienda_id' => $vivienda6->id,
+            'nombres' => 'Adalberto',
+            'apellido_paterno' => 'Ruiz',
+            'apellido_materno' => 'Alvarez',
+            'ci' => '12345606',
+            'fecha_nacimiento' => '1975-08-29',
+            'celular' => '70012306',
+            'tipo_residente' => 'PROPIETARIO',
+            'activo' => true,
+        ]);
+       
         // Crear reunión
         $reunion = Reunion::create([
             'titulo' => 'Reunión Ordinaria - Enero 2026',
@@ -144,7 +260,7 @@ class DatabaseSeeder extends Seeder
         Aporte::create([
             'actividad_id' => $actividad->id,
             'vivienda_id' => $vivienda1->id,
-            'monto' => 500.00,
+            'monto' => 250.00,
             'fecha_vencimiento' => now()->addDays(15),
             'estado' => 'PENDIENTE',
         ]);
@@ -152,7 +268,7 @@ class DatabaseSeeder extends Seeder
         Aporte::create([
             'actividad_id' => $actividad->id,
             'vivienda_id' => $vivienda2->id,
-            'monto' => 500.00,
+            'monto' => 250.00,
             'fecha_vencimiento' => now()->addDays(15),
             'estado' => 'PENDIENTE',
         ]);
@@ -160,15 +276,38 @@ class DatabaseSeeder extends Seeder
         Aporte::create([
             'actividad_id' => $actividad->id,
             'vivienda_id' => $vivienda3->id,
-            'monto' => 500.00,
+            'monto' => 250.00,
             'fecha_vencimiento' => now()->addDays(15),
             'estado' => 'PENDIENTE',
         ]);
 
-        // Crear comunicación
+        Aporte::create([
+            'actividad_id' => $actividad->id,
+            'vivienda_id' => $vivienda4->id,
+            'monto' => 250.00,
+            'fecha_vencimiento' => now()->addDays(15),
+            'estado' => 'PENDIENTE',
+        ]);
+
+        Aporte::create([
+            'actividad_id' => $actividad->id,
+            'vivienda_id' => $vivienda5->id,
+            'monto' => 250.00,
+            'fecha_vencimiento' => now()->addDays(15),
+            'estado' => 'PENDIENTE',
+        ]);
+        Aporte::create([
+            'actividad_id' => $actividad->id,
+            'vivienda_id' => $vivienda6->id,
+            'monto' => 250.00,
+            'fecha_vencimiento' => now()->addDays(15),
+            'estado' => 'PENDIENTE',
+        ]);
+
+        // Crear comunicación al Administrador y a los Residenetes
         Comunicacion::create([
             'tipo' => 'COMUNICADO',
-            'asunto' => 'Bienvenida al Sistema',
+            'asunto' => 'Bienvenida al Sistema - Demo',
             'contenido' => 'Estimados residentes, bienvenidos al nuevo sistema de gestión del condominio.',
             'remitente_id' => $admin->id,
             'fecha_envio' => now(),
@@ -176,10 +315,11 @@ class DatabaseSeeder extends Seeder
             'estado' => 'ENVIADO',
             'enviado_por_email' => false,
         ]);
+        
 
         $this->command->info('Datos de prueba creados exitosamente!');
         $this->command->info('Usuario Admin: admin@tecnoweb.org.bo / admin123');
         $this->command->info('Usuario Directorio: directorio@tecnoweb.org.bo / directorio123');
-        $this->command->info('Usuario Propietario: maria@example.com / propietario123');
+        $this->command->info('Usuario Propietario: amilcar@gmail.com / amilcar123*');
     }
 }

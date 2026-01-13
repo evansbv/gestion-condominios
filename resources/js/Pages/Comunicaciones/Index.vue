@@ -7,7 +7,7 @@
             <h1 class="text-3xl font-bold text-gray-900">Comunicaciones</h1>
             <p class="mt-2 text-sm text-gray-600">Avisos, convocatorias y comunicados del condominio</p>
           </div>
-          <Button
+          <Button  v-if="isAdmin" 
             @click="router.visit(route('comunicaciones.create'))"
             variant="primary"
           >
@@ -214,4 +214,16 @@ const clearFilters = () => {
   searchForm.estado = 'TODOS'
   handleSearch()
 }
+
+//validar si es admin
+import { computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
+// Usuario autenticado desde Inertia
+const page = usePage()
+const user = computed(() => page.props.auth?.user)
+
+// Computed correcto
+const isAdmin = computed(() => {
+    return user.value?.rol === 'ADMINISTRADOR'
+})
 </script>

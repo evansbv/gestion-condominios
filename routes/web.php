@@ -30,12 +30,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Residentes - Accesible por ADMINISTRADOR y MIEMBRO_DIRECTORIO
-    Route::middleware('role:ADMINISTRADOR,MIEMBRO_DIRECTORIO')->group(function () {
+    Route::middleware('role:ADMINISTRADOR,MIEMBRO_DIRECTORIO,PROPIETARIO')->group(function () {
         Route::resource('residentes', ResidenteController::class);
     });
 
     // Viviendas - Accesible por ADMINISTRADOR y MIEMBRO_DIRECTORIO
-    Route::middleware('role:ADMINISTRADOR,MIEMBRO_DIRECTORIO')->group(function () {
+    Route::middleware('role:ADMINISTRADOR,MIEMBRO_DIRECTORIO,PROPIETARIO')->group(function () {
         Route::resource('viviendas', ViviendaController::class);
     });
 

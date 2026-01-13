@@ -27,7 +27,7 @@
                 Mapa
               </button>
             </div>
-            <Button
+            <Button  v-if="isAdmin"
               @click="router.visit(route('viviendas.create'))"
               variant="primary"
             >
@@ -103,6 +103,15 @@
               class="border border-gray-200 rounded-lg p-5 hover:shadow-lg transition-shadow cursor-pointer"
               @click="router.visit(route('viviendas.show', vivienda.id))"
             >
+<!--
+                      Vivienda :{{ vivienda.residentes[0].id}}<br> 
+                      Dueño de Vivienda :{{ vivienda.residentes[0].user_id}}<br>            
+                      Usuario :{{ user.id }} <br>
+                      Tipo :{{ user.rol }} <br>
+                    -->
+                      
+                    Propietario :{{ vivienda.residentes[0].nombres}} {{ vivienda.residentes[0].apellido_paterno}} {{ vivienda.residentes[0].apellido_materno}}<br>            
+                      
               <div class="flex justify-between items-start mb-3">
                 <div>
                   <h3 class="text-lg font-semibold text-gray-900">{{ vivienda.numero }}</h3>
@@ -160,7 +169,7 @@
               </div>
 
               <div class="mt-4 pt-4 border-t border-gray-200 flex gap-2">
-                <Button
+                <Button  v-if="isAdmin"
                   size="sm"
                   variant="primary"
                   class="flex-1"
@@ -272,4 +281,16 @@ const handleMarkerClick = (marker) => {
     router.visit(route('viviendas.show', marker.data.id))
   }
 }
+
+//validar si es admin
+//import { computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
+// Usuario autenticado desde Inertia
+const page = usePage()
+const user = computed(() => page.props.auth?.user)
+
+// Computed correcto
+const isAdmin = computed(() => {
+    return user.value?.rol === 'ADMINISTRADOR'
+})
 </script>

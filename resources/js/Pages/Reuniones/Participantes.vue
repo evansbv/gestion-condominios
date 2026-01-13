@@ -168,8 +168,10 @@ const contarPresentes = computed(() => {
 const getResidenteInfo = (residenteId) => {
   const residente = props.residentes.find(r => r.id === residenteId)
   return {
-    nombre: residente ? `${residente.nombres} ${residente.apellidos}` : 'N/A',
-    vivienda: residente?.vivienda?.numero_vivienda || 'N/A'
+    nombre: residente ? `${residente.nombres} ${residente.apellido_paterno} ${residente.apellido_materno}` : 'N/A',
+    //vivienda: residente?.vivienda?.numero_vivienda || 'N/A'
+    vivienda: residente? `${residente.vivienda?.numero} ${residente.vivienda?.direccion} ` :  'N/A'
+    //vivienda: residente?.vivienda?.direccion  || 'N/A'
   }
 }
 
