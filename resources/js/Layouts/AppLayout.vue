@@ -49,6 +49,41 @@
                         <Link :href="route('reuniones.index')" class="text-gray-600 hover:text-gray-900 text-sm font-medium">
                             Reuniones
                         </Link>
+
+                        <Link
+                            v-if="canAccess(['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'])"
+                            :href="route('finanzas.dashboard')"
+                            class="text-gray-600 hover:text-gray-900 text-sm font-medium"
+                        >
+                            Finanzas
+                        </Link>
+
+                        <!-- Menú de Reportes -->
+                        <div class="relative group">
+                            <button class="text-gray-600 hover:text-gray-900 text-sm font-medium flex items-center">
+                                Reportes
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                <div class="py-1">
+                                    <Link
+                                        :href="route('reportes.aportes-por-residente')"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    >
+                                        Aportes por Residente
+                                    </Link>
+                                    <Link
+                                        v-if="canAccess(['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'])"
+                                        :href="route('reportes.aportes-por-actividad')"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    >
+                                        Aportes por Actividad
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- USUARIO DESKTOP -->
@@ -132,6 +167,37 @@
                 <Link :href="route('reuniones.index')" class="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 text-sm font-medium" @click="closeMenu">
                     Reuniones
                 </Link>
+
+                <Link
+                    v-if="canAccess(['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'])"
+                    :href="route('finanzas.dashboard')"
+                    class="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 text-sm font-medium"
+                    @click="closeMenu"
+                >
+                    Finanzas
+                </Link>
+
+                <!-- Reportes Mobile -->
+                <div class="border-t pt-2 mt-2">
+                    <div class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Reportes
+                    </div>
+                    <Link
+                        :href="route('reportes.aportes-por-residente')"
+                        class="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 text-sm font-medium"
+                        @click="closeMenu"
+                    >
+                        Aportes por Residente
+                    </Link>
+                    <Link
+                        v-if="canAccess(['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'])"
+                        :href="route('reportes.aportes-por-actividad')"
+                        class="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 text-sm font-medium"
+                        @click="closeMenu"
+                    >
+                        Aportes por Actividad
+                    </Link>
+                </div>
 
                 <div class="border-t pt-3">
                     <span class="block text-sm text-gray-700 mb-2">

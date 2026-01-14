@@ -9,6 +9,10 @@ use App\Http\Controllers\ReunionController;
 use App\Http\Controllers\ActividadController;
 use App\Http\Controllers\AporteController;
 use App\Http\Controllers\ComunicacionController;
+use App\Http\Controllers\ReporteFinancieroController;
+use App\Http\Controllers\ActividadReporteController;
+use App\Http\Controllers\AporteResidenteController;
+use App\Http\Controllers\AporteActividadController;
 use Inertia\Inertia;
 
 // Ruta pública
@@ -53,8 +57,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/reuniones/{reunion}/enviar-convocatorias', [ReunionController::class, 'enviarConvocatorias'])->name('reuniones.enviarConvocatorias');
     });
 
-    // Actividades - Index visible para todos
+    // Actividades - Index y Tablero visibles para todos
     Route::get('actividades', [ActividadController::class, 'index'])->name('actividades.index');
+    Route::get('actividades/tablero', [ActividadReporteController::class, 'tablero'])->name('actividades.tablero');
 
     // Actividades - Gestión solo para ADMINISTRADOR y MIEMBRO_DIRECTORIO
     Route::middleware('role:ADMINISTRADOR,MIEMBRO_DIRECTORIO')->group(function () {
@@ -73,6 +78,8 @@ Route::middleware('auth')->group(function () {
 
     // Rutas específicas (deben ir antes de las rutas con parámetros)
     Route::get('/aportes/estadisticas', [AporteController::class, 'estadisticas'])->name('aportes.estadisticas');
+    Route::get('/aportes/estadisticas/pdf', [AporteController::class, 'estadisticasPDF'])->name('aportes.estadisticas.pdf');
+    Route::get('/aportes/estadisticas/csv', [AporteController::class, 'estadisticasCSV'])->name('aportes.estadisticas.csv');
 
     // Gestión de aportes - Solo ADMINISTRADOR y MIEMBRO_DIRECTORIO
     Route::middleware('role:ADMINISTRADOR,MIEMBRO_DIRECTORIO')->group(function () {
@@ -105,4 +112,28 @@ Route::middleware('auth')->group(function () {
     // Comunicaciones con parámetros (deben ir al final)
     Route::get('/comunicaciones/{comunicacion}', [ComunicacionController::class, 'show'])->name('comunicaciones.show');
     Route::post('/comunicaciones/{comunicacion}/marcar-leida', [ComunicacionController::class, 'marcarComoLeida'])->name('comunicaciones.marcarLeida');
+
+    // Reportes Financieros - Dashboard visible para admin y directorio
+    Route::middleware('role:ADMINISTRADOR,MIEMBRO_DIRECTORIO')->group(function () {
+        Route::get('/finanzas/dashboard', [ReporteFinancieroController::class, 'dashboard'])->name('finanzas.dashboard');
+        Route::get('/finanzas/exportar-pdf', [ReporteFinancieroController::class, 'exportarPDF'])->name('finanzas.exportar-pdf');
+        Route::get('/finanzas/exportar-csv', [ReporteFinancieroController::class, 'exportarCSV'])->name('finanzas.exportar-csv');
+    });
+
+    // Mis Aportes - Vista personal para todos los usuarios autenticados
+    Route::get('/mis-aportes', [ReporteFinancieroController::class, 'misAportes'])->name('mis-aportes');
+    Route::get('/mis-aportes/pdf', [ReporteFinancieroController::class, 'misAportesPDF'])->name('mis-aportes.pdf');
+    Route::get('/mis-aportes/csv', [ReporteFinancieroController::class, 'misAportesCSV'])->name('mis-aportes.csv');
+
+    // Reportes de Aportes - Visible para admin/directorio, pero los usuarios regulares ven solo sus datos
+    Route::get('/reportes/aportes-por-residente', [AporteResidenteController::class, 'index'])->name('reportes.aportes-por-residente');
+    Route::get('/reportes/aportes-por-residente/pdf', [AporteResidenteController::class, 'exportarPDF'])->name('reportes.aportes-por-residente.pdf');
+    Route::get('/reportes/aportes-por-residente/csv', [AporteResidenteController::class, 'exportarCSV'])->name('reportes.aportes-por-residente.csv');
+
+    // Reportes de Aportes por Actividad - Visible para admin/directorio
+    Route::middleware('role:ADMINISTRADOR,MIEMBRO_DIRECTORIO')->group(function () {
+        Route::get('/reportes/aportes-por-actividad', [AporteActividadController::class, 'index'])->name('reportes.aportes-por-actividad');
+        Route::get('/reportes/aportes-por-actividad/pdf', [AporteActividadController::class, 'exportarPDF'])->name('reportes.aportes-por-actividad.pdf');
+        Route::get('/reportes/aportes-por-actividad/csv', [AporteActividadController::class, 'exportarCSV'])->name('reportes.aportes-por-actividad.csv');
+    });
 });

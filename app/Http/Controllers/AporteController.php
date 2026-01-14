@@ -323,26 +323,301 @@ class AporteController extends Controller
     {
         $user = auth()->user();
 
-        if (in_array($user->rol, ['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'])) {
-            // Estadísticas generales
-            $estadisticas = $this->moraService->obtenerEstadisticasMora();
+        if (!in_array($user->rol, ['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'])) {
+            abort(403, 'No tiene permisos para ver estas estadísticas.');
+        }
 
-            return Inertia::render('Aportes/Estadisticas', [
-                'estadisticas' => $estadisticas
+        // Obtener todos los aportes con relaciones
+        $aportes = Aporte::with(['actividad', 'vivienda'])->get();
+
+        // Calcular mora actualizada para cada aporte
+        $aportes = $aportes->map(function ($aporte) {
+            $aporte->mora_actualizada = $aporte->calcularMora();
+            return $aporte;
+        });
+
+        // Estadísticas globales
+        $estadisticasGlobales = [
+            'total_esperado' => $aportes->sum('monto'),
+            'total_pagado' => $aportes->sum('monto_pagado'),
+            'total_pendiente' => $aportes->sum(function($a) {
+                return $a->monto - $a->monto_pagado;
+            }),
+            'total_mora' => $aportes->sum('mora_actualizada'),
+            'total_aportes' => $aportes->count(),
+            'aportes_pagados' => $aportes->where('estado', 'PAGADO')->count(),
+            'aportes_pendientes' => $aportes->whereIn('estado', ['PENDIENTE', 'VENCIDO', 'PARCIAL'])->count(),
+        ];
+
+        // Estadísticas por actividad
+        $estadisticasPorActividad = [];
+        $actividades = Actividad::all();
+
+        foreach ($actividades as $actividad) {
+            $aportesActividad = $aportes->where('actividad_id', $actividad->id);
+
+            if ($aportesActividad->count() > 0) {
+                $totalEsperado = $aportesActividad->sum('monto');
+                $totalPagado = $aportesActividad->sum('monto_pagado');
+                $totalPendiente = $aportesActividad->sum(function($a) {
+                    return $a->monto - $a->monto_pagado;
+                });
+                $totalMora = $aportesActividad->sum('mora_actualizada');
+
+                $estadisticasPorActividad[] = [
+                    'actividad_id' => $actividad->id,
+                    'actividad_titulo' => $actividad->titulo,
+                    'actividad_tipo' => $actividad->tipo,
+                    'total_esperado' => round($totalEsperado, 2),
+                    'total_pagado' => round($totalPagado, 2),
+                    'total_pendiente' => round($totalPendiente, 2),
+                    'total_mora' => round($totalMora, 2),
+                    'porcentaje_pagado' => $totalEsperado > 0 ? round(($totalPagado / $totalEsperado) * 100, 2) : 0,
+                    'numero_aportes' => $aportesActividad->count(),
+                    'aportes_pagados' => $aportesActividad->where('estado', 'PAGADO')->count(),
+                    'aportes_pendientes' => $aportesActividad->whereIn('estado', ['PENDIENTE', 'VENCIDO', 'PARCIAL'])->count(),
+                ];
+            }
+        }
+
+        // Estadísticas por vivienda
+        $estadisticasPorVivienda = [];
+        $viviendas = Vivienda::where('activo', true)->get();
+
+        foreach ($viviendas as $vivienda) {
+            $aportesVivienda = $aportes->where('vivienda_id', $vivienda->id);
+
+            if ($aportesVivienda->count() > 0) {
+                $totalPagado = $aportesVivienda->sum('monto_pagado');
+                $totalPendiente = $aportesVivienda->sum(function($a) {
+                    return $a->monto - $a->monto_pagado;
+                });
+                $totalMora = $aportesVivienda->sum('mora_actualizada');
+
+                $estadisticasPorVivienda[] = [
+                    'vivienda_id' => $vivienda->id,
+                    'vivienda_numero' => $vivienda->numero,
+                    'vivienda_direccion' => $vivienda->direccion,
+                    'total_pagado' => round($totalPagado, 2),
+                    'total_pendiente' => round($totalPendiente, 2),
+                    'total_mora' => round($totalMora, 2),
+                    'aportes_pagados' => $aportesVivienda->where('estado', 'PAGADO')->count(),
+                    'aportes_pendientes' => $aportesVivienda->whereIn('estado', ['PENDIENTE', 'VENCIDO', 'PARCIAL'])->count(),
+                ];
+            }
+        }
+
+        // Ordenar por total pendiente (mayor a menor)
+        usort($estadisticasPorVivienda, function($a, $b) {
+            return $b['total_pendiente'] <=> $a['total_pendiente'];
+        });
+
+        return Inertia::render('Aportes/Estadisticas', [
+            'estadisticasGlobales' => $estadisticasGlobales,
+            'estadisticasPorActividad' => $estadisticasPorActividad,
+            'estadisticasPorVivienda' => $estadisticasPorVivienda
+        ]);
+    }
+
+    /**
+     * Exportar estadísticas a PDF
+     */
+    public function estadisticasPDF()
+    {
+        $user = auth()->user();
+
+        if (!in_array($user->rol, ['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'])) {
+            abort(403, 'No tiene permisos para exportar estas estadísticas.');
+        }
+
+        // Obtener todos los aportes con relaciones
+        $aportes = Aporte::with(['actividad', 'vivienda'])->get();
+
+        // Calcular mora actualizada para cada aporte
+        $aportes = $aportes->map(function ($aporte) {
+            $aporte->mora_actualizada = $aporte->calcularMora();
+            return $aporte;
+        });
+
+        // Estadísticas globales
+        $estadisticasGlobales = [
+            'total_esperado' => $aportes->sum('monto'),
+            'total_pagado' => $aportes->sum('monto_pagado'),
+            'total_pendiente' => $aportes->sum(function($a) {
+                return $a->monto - $a->monto_pagado;
+            }),
+            'total_mora' => $aportes->sum('mora_actualizada'),
+            'total_aportes' => $aportes->count(),
+            'aportes_pagados' => $aportes->where('estado', 'PAGADO')->count(),
+            'aportes_pendientes' => $aportes->whereIn('estado', ['PENDIENTE', 'VENCIDO', 'PARCIAL'])->count(),
+        ];
+
+        // Estadísticas por actividad
+        $estadisticasPorActividad = [];
+        $actividades = Actividad::all();
+
+        foreach ($actividades as $actividad) {
+            $aportesActividad = $aportes->where('actividad_id', $actividad->id);
+
+            if ($aportesActividad->count() > 0) {
+                $totalEsperado = $aportesActividad->sum('monto');
+                $totalPagado = $aportesActividad->sum('monto_pagado');
+                $totalPendiente = $aportesActividad->sum(function($a) {
+                    return $a->monto - $a->monto_pagado;
+                });
+                $totalMora = $aportesActividad->sum('mora_actualizada');
+
+                $estadisticasPorActividad[] = [
+                    'actividad_id' => $actividad->id,
+                    'actividad_titulo' => $actividad->titulo,
+                    'actividad_tipo' => $actividad->tipo,
+                    'total_esperado' => round($totalEsperado, 2),
+                    'total_pagado' => round($totalPagado, 2),
+                    'total_pendiente' => round($totalPendiente, 2),
+                    'total_mora' => round($totalMora, 2),
+                    'porcentaje_pagado' => $totalEsperado > 0 ? round(($totalPagado / $totalEsperado) * 100, 2) : 0,
+                    'numero_aportes' => $aportesActividad->count(),
+                    'aportes_pagados' => $aportesActividad->where('estado', 'PAGADO')->count(),
+                    'aportes_pendientes' => $aportesActividad->whereIn('estado', ['PENDIENTE', 'VENCIDO', 'PARCIAL'])->count(),
+                ];
+            }
+        }
+
+        // Estadísticas por vivienda
+        $estadisticasPorVivienda = [];
+        $viviendas = Vivienda::where('activo', true)->get();
+
+        foreach ($viviendas as $vivienda) {
+            $aportesVivienda = $aportes->where('vivienda_id', $vivienda->id);
+
+            if ($aportesVivienda->count() > 0) {
+                $totalPagado = $aportesVivienda->sum('monto_pagado');
+                $totalPendiente = $aportesVivienda->sum(function($a) {
+                    return $a->monto - $a->monto_pagado;
+                });
+                $totalMora = $aportesVivienda->sum('mora_actualizada');
+
+                $estadisticasPorVivienda[] = [
+                    'vivienda_id' => $vivienda->id,
+                    'vivienda_numero' => $vivienda->numero,
+                    'vivienda_direccion' => $vivienda->direccion,
+                    'total_pagado' => round($totalPagado, 2),
+                    'total_pendiente' => round($totalPendiente, 2),
+                    'total_mora' => round($totalMora, 2),
+                    'aportes_pagados' => $aportesVivienda->where('estado', 'PAGADO')->count(),
+                    'aportes_pendientes' => $aportesVivienda->whereIn('estado', ['PENDIENTE', 'VENCIDO', 'PARCIAL'])->count(),
+                ];
+            }
+        }
+
+        // Ordenar por total pendiente
+        usort($estadisticasPorVivienda, function($a, $b) {
+            return $b['total_pendiente'] <=> $a['total_pendiente'];
+        });
+
+        $pdf = \PDF::loadView('reportes.estadisticas-aportes-pdf', [
+            'estadisticasGlobales' => $estadisticasGlobales,
+            'estadisticasPorActividad' => $estadisticasPorActividad,
+            'estadisticasPorVivienda' => $estadisticasPorVivienda,
+            'fecha_generacion' => \Carbon\Carbon::now()->format('d/m/Y H:i')
+        ]);
+
+        return $pdf->download('estadisticas-aportes.pdf');
+    }
+
+    /**
+     * Exportar estadísticas a CSV
+     */
+    public function estadisticasCSV()
+    {
+        $user = auth()->user();
+
+        if (!in_array($user->rol, ['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'])) {
+            abort(403, 'No tiene permisos para exportar estas estadísticas.');
+        }
+
+        // Obtener todos los aportes con relaciones
+        $aportes = Aporte::with(['actividad', 'vivienda'])->get();
+
+        // Calcular mora actualizada para cada aporte
+        $aportes = $aportes->map(function ($aporte) {
+            $aporte->mora_actualizada = $aporte->calcularMora();
+            return $aporte;
+        });
+
+        // Estadísticas por actividad
+        $estadisticasPorActividad = [];
+        $actividades = Actividad::all();
+
+        foreach ($actividades as $actividad) {
+            $aportesActividad = $aportes->where('actividad_id', $actividad->id);
+
+            if ($aportesActividad->count() > 0) {
+                $totalEsperado = $aportesActividad->sum('monto');
+                $totalPagado = $aportesActividad->sum('monto_pagado');
+                $totalPendiente = $aportesActividad->sum(function($a) {
+                    return $a->monto - $a->monto_pagado;
+                });
+                $totalMora = $aportesActividad->sum('mora_actualizada');
+
+                $estadisticasPorActividad[] = [
+                    'actividad_titulo' => $actividad->titulo,
+                    'actividad_tipo' => $actividad->tipo,
+                    'total_esperado' => round($totalEsperado, 2),
+                    'total_pagado' => round($totalPagado, 2),
+                    'total_pendiente' => round($totalPendiente, 2),
+                    'total_mora' => round($totalMora, 2),
+                    'porcentaje_pagado' => $totalEsperado > 0 ? round(($totalPagado / $totalEsperado) * 100, 2) : 0,
+                    'numero_aportes' => $aportesActividad->count(),
+                    'aportes_pagados' => $aportesActividad->where('estado', 'PAGADO')->count(),
+                    'aportes_pendientes' => $aportesActividad->whereIn('estado', ['PENDIENTE', 'VENCIDO', 'PARCIAL'])->count(),
+                ];
+            }
+        }
+
+        $filename = 'estadisticas-aportes-por-actividad.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function() use ($estadisticasPorActividad) {
+            $file = fopen('php://output', 'w');
+
+            // Encabezados
+            fputcsv($file, [
+                'Actividad',
+                'Tipo',
+                'Total Esperado (Bs)',
+                'Total Pagado (Bs)',
+                'Total Pendiente (Bs)',
+                'Mora Acumulada (Bs)',
+                '% Pagado',
+                'Total Aportes',
+                'Aportes Pagados',
+                'Aportes Pendientes'
             ]);
-        } else {
-            // Estadísticas de la vivienda del residente
-            $residente = $user->residente;
 
-            if (!$residente) {
-                abort(403, 'Usuario no asociado a una vivienda.');
+            // Datos
+            foreach ($estadisticasPorActividad as $item) {
+                fputcsv($file, [
+                    $item['actividad_titulo'],
+                    $item['actividad_tipo'],
+                    number_format($item['total_esperado'], 2),
+                    number_format($item['total_pagado'], 2),
+                    number_format($item['total_pendiente'], 2),
+                    number_format($item['total_mora'], 2),
+                    $item['porcentaje_pagado'] . '%',
+                    $item['numero_aportes'],
+                    $item['aportes_pagados'],
+                    $item['aportes_pendientes']
+                ]);
             }
 
-            $resumenDeuda = $this->moraService->obtenerResumenDeuda($residente->vivienda_id);
+            fclose($file);
+        };
 
-            return Inertia::render('Aportes/MiDeuda', [
-                'resumen' => $resumenDeuda
-            ]);
-        }
+        return response()->stream($callback, 200, $headers);
     }
 }

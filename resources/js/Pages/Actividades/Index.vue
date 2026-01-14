@@ -4,19 +4,30 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center mb-6">
           <div>
-            <h1 class="text-3xl font-bold text-gray-900">Tablero de Actividades</h1>
+            <h1 class="text-3xl font-bold text-gray-900">Actividades</h1>
             <p class="mt-2 text-sm text-gray-600">Actividades y proyectos del condominio</p>
           </div>
-          <Button 
-            v-if="isAdmin"
-            @click="router.visit(route('actividades.create'))"
-            variant="primary"
-          >
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Nueva Actividad
-          </Button>
+          <div class="flex gap-2">
+            <Button
+              @click="router.visit(route('actividades.tablero'))"
+              variant="secondary"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+              </svg>
+              Ver Tablero
+            </Button>
+            <Button
+              v-if="isAdmin"
+              @click="router.visit(route('actividades.create'))"
+              variant="primary"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Nueva Actividad
+            </Button>
+          </div>
         </div>
 
         <Alert
