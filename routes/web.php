@@ -48,6 +48,11 @@ Route::middleware('auth')->group(function () {
         // Rutas específicas primero
         Route::get('/reuniones/calendario/vista', [ReunionController::class, 'calendario'])->name('reuniones.calendario');
 
+        // Rutas de exportación
+        Route::get('/reuniones/export/listado', [ReunionController::class, 'exportListado'])->name('reuniones.exportListado');
+        Route::get('/reuniones/{reunion}/export/convocatoria', [ReunionController::class, 'exportConvocatoria'])->name('reuniones.exportConvocatoria');
+        Route::get('/reuniones/{reunion}/export/acta', [ReunionController::class, 'exportActa'])->name('reuniones.exportActa');
+
         // Resource y rutas con parámetros
         Route::resource('reuniones', ReunionController::class);
         Route::get('/reuniones/{reunion}/participantes', [ReunionController::class, 'participantes'])->name('reuniones.participantes');

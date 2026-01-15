@@ -7,15 +7,26 @@
             <h1 class="text-3xl font-bold text-gray-900">Reuniones</h1>
             <p class="mt-2 text-sm text-gray-600">Gestión de reuniones y asambleas del condominio</p>
           </div>
-          <Button v-if="isAdmin" 
-            @click="router.visit(route('reuniones.create'))"
-            variant="primary"
-          >
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Nueva Reunión
-          </Button>
+          <div class="flex gap-2">
+            <Button
+              variant="secondary"
+              @click="exportarListadoPDF"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              Exportar Listado PDF
+            </Button>
+            <Button v-if="isAdmin"
+              @click="router.visit(route('reuniones.create'))"
+              variant="primary"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Nueva Reunión
+            </Button>
+          </div>
         </div>
 
         <Alert
@@ -170,6 +181,18 @@ const clearFilters = () => {
   searchForm.estado = 'TODOS'
   searchForm.anio = 'TODOS'
   handleSearch()
+}
+
+const exportarListadoPDF = () => {
+  const params = new URLSearchParams()
+  if (searchForm.estado !== 'TODOS') {
+    params.append('estado', searchForm.estado)
+  }
+  if (searchForm.anio !== 'TODOS') {
+    params.append('anio', searchForm.anio)
+  }
+
+  window.location.href = route('reuniones.exportListado') + (params.toString() ? '?' + params.toString() : '')
 }
 
 //validar si es admin

@@ -7,6 +7,8 @@ use App\Models\Residente;
 use App\Models\User;
 use App\Services\EmailService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Inertia\Inertia;
 
 class ReunionController extends Controller
@@ -336,5 +338,103 @@ class ReunionController extends Controller
             'anio' => $anio,
             'mes' => $mes
         ]);
+    }
+
+    /**
+     * Exportar listado de reuniones a PDF
+     */
+    public function exportListado(Request $request)
+    {
+        $query = Reunion::with(['convocante', 'participantes']);
+
+        // Aplicar filtros
+        if ($request->has('estado') && $request->estado != 'TODOS') {
+            $query->where('estado', $request->estado);
+        }
+
+        if ($request->has('anio') && $request->anio != 'TODOS') {
+            $query->whereYear('fecha_reunion', $request->anio);
+        }
+
+        $reuniones = $query->orderBy('fecha_reunion', 'desc')->get();
+
+        // Agregar información adicional
+        $reuniones->transform(function ($reunion) {
+            $reunion->total_participantes = $reunion->participantes->count();
+            $reunion->participantes_asistieron = $reunion->participantes->filter(function ($participante) {
+                return $participante->pivot->asistio === true;
+            })->count();
+            return $reunion;
+        });
+
+        $data = [
+            'reuniones' => $reuniones,
+            'fecha_generacion' => now()->format('d/m/Y H:i'),
+            'filtros' => [
+                'estado' => $request->estado != 'TODOS' ? $request->estado : 'Todos',
+                'anio' => $request->anio != 'TODOS' ? $request->anio : 'Todos'
+            ]
+        ];
+
+        $pdf = Pdf::loadView('reportes.listado-reuniones-pdf', $data);
+        $pdf->setPaper('letter', 'portrait');
+
+        return $pdf->download('listado-reuniones-' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Exportar convocatoria de reunión a PDF
+     */
+    public function exportConvocatoria(Reunion $reunion)
+    {
+        // Solo permitir exportar convocatoria si está en estado CONVOCADA
+        if ($reunion->estado !== 'CONVOCADA') {
+            return back()->withErrors([
+                'error' => 'Solo se puede exportar la convocatoria de reuniones en estado CONVOCADA.'
+            ]);
+        }
+
+        $reunion->load(['convocante', 'participantes.vivienda']);
+
+        $data = [
+            'reunion' => $reunion,
+            'fecha_generacion' => now()->format('d/m/Y H:i')
+        ];
+
+        $pdf = Pdf::loadView('reportes.convocatoria-reunion-pdf', $data);
+        $pdf->setPaper('letter', 'portrait');
+
+        return $pdf->download('convocatoria-' . Str::slug($reunion->titulo) . '-' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Exportar acta de reunión a PDF
+     */
+    public function exportActa(Reunion $reunion)
+    {
+        // Solo permitir exportar acta si está en estado REALIZADA
+        if ($reunion->estado !== 'REALIZADA') {
+            return back()->withErrors([
+                'error' => 'Solo se puede exportar el acta de reuniones en estado REALIZADA.'
+            ]);
+        }
+
+        $reunion->load(['convocante', 'participantes.vivienda', 'actividades']);
+
+        // Calcular estadísticas de asistencia
+        $reunion->total_convocados = $reunion->participantes->count();
+        $reunion->total_asistieron = $reunion->participantes->filter(function ($participante) {
+            return $participante->pivot->asistio === true;
+        })->count();
+
+        $data = [
+            'reunion' => $reunion,
+            'fecha_generacion' => now()->format('d/m/Y H:i')
+        ];
+
+        $pdf = Pdf::loadView('reportes.acta-reunion-pdf', $data);
+        $pdf->setPaper('letter', 'portrait');
+
+        return $pdf->download('acta-' . Str::slug($reunion->titulo) . '-' . now()->format('Y-m-d') . '.pdf');
     }
 }

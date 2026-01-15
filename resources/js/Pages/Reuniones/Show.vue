@@ -10,16 +10,40 @@
               Convocada por {{ reunion.convocante?.name || 'N/A' }} el {{ formatDate(reunion.fecha_convocatoria) }}
             </p>
           </div>
-          <div v-if="isAdmin" class="flex gap-2">
-            <Button  
-              v-if="reunion.estado !== 'REALIZADA'"
+          <div class="flex gap-2">
+            <!-- Export Buttons - Conditional by status -->
+            <Button
+              v-if="reunion.estado === 'CONVOCADA'"
+              variant="secondary"
+              @click="exportarConvocatoria"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              Exportar Convocatoria
+            </Button>
+
+            <Button
+              v-if="reunion.estado === 'REALIZADA'"
+              variant="success"
+              @click="exportarActa"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Exportar Acta
+            </Button>
+
+            <!-- Admin Edit Button -->
+            <Button
+              v-if="isAdmin && reunion.estado !== 'REALIZADA'"
               variant="primary"
               @click="router.visit(route('reuniones.edit', reunion.id))"
             >
               Editar
             </Button>
-          </div>
-          <div class="flex gap-2">
+
+            <!-- Back Button -->
             <Button
               variant="ghost"
               @click="router.visit(route('reuniones.index'))"
@@ -253,6 +277,14 @@ const getResponsableName = (responsableId) => {
   // This would need to be passed from the controller
   // For now, return the ID
   return `Usuario #${responsableId}`
+}
+
+const exportarConvocatoria = () => {
+  window.location.href = route('reuniones.exportConvocatoria', props.reunion.id)
+}
+
+const exportarActa = () => {
+  window.location.href = route('reuniones.exportActa', props.reunion.id)
 }
 
 //validar si es admin
