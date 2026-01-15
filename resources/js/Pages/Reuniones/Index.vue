@@ -116,7 +116,7 @@
               </div>
 
               <div class="mt-4 pt-4 border-t border-gray-200 flex gap-2">
-                <Button v-if="isAdmin" 
+                <Button v-if="isAdmin && reunion.estado === 'CONVOCADA'" 
                   size="sm"
                   variant="primary"
                   class="flex-1"
