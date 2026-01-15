@@ -149,7 +149,7 @@
             No hay participantes registrados
           </div>
 
-          <div v-if="reunion.estado !== 'CANCELADA'" class="mt-4 pt-4 border-t">
+          <div v-if="reunion.estado === 'CONVOCADA'" class="mt-4 pt-4 border-t">
             <Button v-if="isAdmin"
               variant="primary"
               @click="router.visit(route('reuniones.participantes', reunion.id))"
