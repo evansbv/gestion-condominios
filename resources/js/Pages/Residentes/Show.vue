@@ -31,7 +31,7 @@
               <div class="text-center">
                 <img
                   v-if="residente.fotografia"
-                  :src="`/urbalemana/gestion-condominios/public/storage/${residente.fotografia}`"
+                  :src="`/urbalemana/storage/${residente.fotografia}`"
                   :alt="residente.nombres"
                   class="h-48 w-48 rounded-full object-cover mx-auto mb-4"
                 />

@@ -100,7 +100,7 @@
               <div v-if="residente?.fotografia" class="mb-3">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Fotografía Actual</label>
                 <img
-                  :src="`/storage/${residente.fotografia}`"
+                  :src="`/urbalemana/storage/${residente.fotografia}`"
                   :alt="residente?.nombres || 'Fotografía'"
                   class="h-32 w-32 rounded-lg object-cover"
                 />

@@ -92,7 +92,7 @@
                   <td class="px-6 py-4 whitespace-nowrap">
                     <img
                       v-if="residente.fotografia"
-                      :src="`/urbalemana/gestion-condominios/public/storage/${residente.fotografia}`"
+                      :src="`/urbalemana/storage/${residente.fotografia}`"
                       :alt="residente.nombres"
                       class="h-10 w-10 rounded-full object-cover"
                     />
