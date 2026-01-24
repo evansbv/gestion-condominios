@@ -7,7 +7,7 @@
             <h1 class="text-3xl font-bold text-gray-900">Comunicaciones</h1>
             <p class="mt-2 text-sm text-gray-600">Avisos, convocatorias y comunicados del condominio</p>
           </div>
-          <Button  v-if="isAdmin" 
+          <Button   
             @click="router.visit(route('comunicaciones.create'))"
             variant="primary"
           >

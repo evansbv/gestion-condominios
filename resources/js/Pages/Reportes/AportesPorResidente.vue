@@ -225,7 +225,7 @@
                   <td class="px-4 py-3">
                     <div class="flex items-center">
                       <div v-if="item.residente_foto" class="flex-shrink-0 h-10 w-10">
-                        <img class="h-10 w-10 rounded-full object-cover" :src="`/storage/${item.residente_foto}`" :alt="item.residente_nombre">
+                        <img class="h-10 w-10 rounded-full object-cover" :src="`/urbalemana/storage/${item.residente_foto}`" :alt="item.residente_nombre">
                       </div>
                       <div v-else class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
                         <span class="text-gray-600 font-semibold text-sm">

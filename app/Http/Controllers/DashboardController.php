@@ -42,12 +42,27 @@ class DashboardController extends Controller
         $estadisticasMora = $this->moraService->obtenerEstadisticasMora();
 
         // Últimas comunicaciones
-        $ultimasComunicaciones = Comunicacion::with('remitente')
-            ->where('estado', 'ENVIADO')
+        if (in_array($user->rol, ['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO', ])) {
+            $ultimasComunicaciones = $query = Comunicacion::with(['remitente', 'destinatarios'])
             ->latest('fecha_envio')
             ->take(5)
             ->get();
-
+        } else {
+        $ultimasComunicaciones = Comunicacion::with('remitente')
+            //->where('estado', 'ENVIADO')
+            ->where(function ($q) use ($user) {
+                $q->whereHas('destinatarios', function ($sub) use ($user) {
+                    $sub->where('user_id', $user->id);
+                })
+                ->orWhereHas('remitente', function ($sub) use ($user) {
+                    // Aquí NO usas where('user_id', ...) porque la tabla es users
+                    $sub->where('id', $user->id);   // ← clave: comparas el id del usuario con la PK de users
+                });
+            })
+            ->latest('fecha_envio')
+            ->take(5)
+            ->get();
+        }
         // Próximas reuniones
         $proximasReuniones = Reunion::with('convocante')
             ->where('estado', 'CONVOCADA')

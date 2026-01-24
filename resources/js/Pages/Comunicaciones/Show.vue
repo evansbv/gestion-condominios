@@ -61,7 +61,7 @@
               <div v-if="comunicacion.archivo_adjunto" class="mt-6 pt-6 border-t border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900 mb-3">Archivo Adjunto</h3>
                 <a
-                  :href="`/urbalemana/gestion-condominios/public/storage/${comunicacion.archivo_adjunto}`"
+                  :href="`/urbalemana/storage/${comunicacion.archivo_adjunto}`"
                   target="_blank"
                   class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
                 >
@@ -121,7 +121,7 @@
                 <div>
                   <label class="text-sm font-medium text-gray-500">Fecha de Envío</label>
                   <p class="text-base text-gray-900">
-                    {{ comunicacion.fecha_envio ? new Date(comunicacion.fecha_envio).toLocaleDateString('es-BO', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'No enviado' }}
+                    {{ formatDateTime(comunicacion.fecha_envio)}}
                   </p>
                 </div>
               </div>
@@ -182,4 +182,18 @@ const canEdit = computed(() => {
   const user = page.props.auth.user
   return user && ['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'].includes(user.rol)
 })
+
+const formatDateTime = (fecha) => {
+  if (!fecha) return 'N/A'
+  const date = new Date(fecha)
+  return date.toLocaleDateString('es-BO', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,            // 24 horas
+    timeZone: 'UTC'
+  })
+}
 </script>

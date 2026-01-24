@@ -30,10 +30,16 @@ class ComunicacionController extends Controller
             $query = Comunicacion::with(['remitente', 'destinatarios']);
         } else {
             $query = Comunicacion::with(['remitente', 'destinatarios'])
-                ->where('estado', 'ENVIADO')
-                ->whereHas('destinatarios', function ($q) use ($user) {
-                    $q->where('user_id', $user->id);
+            //->where('estado', 'ENVIADO')           // ← mantienes este filtro si lo necesitas
+            ->where(function ($q) use ($user) {
+                $q->whereHas('destinatarios', function ($sub) use ($user) {
+                    $sub->where('user_id', $user->id);
+                })
+                ->orWhereHas('remitente', function ($sub) use ($user) {
+                    // Aquí NO usas where('user_id', ...) porque la tabla es users
+                    $sub->where('id', $user->id);   // ← clave: comparas el id del usuario con la PK de users
                 });
+            }); 
         }
 
         // Filtro por tipo
@@ -161,7 +167,7 @@ class ComunicacionController extends Controller
         $user = auth()->user();
 
         // Verificar permiso
-        if (!in_array($user->rol, ['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO'])) {
+        if (!in_array($user->rol, ['ADMINISTRADOR', 'MIEMBRO_DIRECTORIO','PROPIETARIO'])) {
             if ($comunicacion->estado !== 'ENVIADO') {
                 abort(403, 'No tiene permiso para ver esta comunicación.');
             }

@@ -113,10 +113,11 @@
                             v-for="reunion in proximasReuniones"
                             :key="reunion.id"
                             class="border-l-4 border-blue-500 pl-3"
+                            @click="router.visit(route('reuniones.show', reunion.id))"
                         >
-                            <p class="font-medium text-gray-900">{{ reunion.titulo }}</p>
+                            <p class="font-medium text-gray-900">{{ reunion.titulo }}({{ reunion.convocante?.name }})</p>
                             <p class="text-sm text-gray-600">
-                                {{ new Date(reunion.fecha_reunion).toLocaleString('es-BO') }}
+                                {{ formatDateTime(reunion.fecha_reunion) }}
                             </p>
                         </div>
                     </div>
@@ -130,11 +131,17 @@
                         <div
                             v-for="comunicacion in ultimasComunicaciones"
                             :key="comunicacion.id"
-                            class="border-l-4 border-green-500 pl-3"
+                            class="border-l-4 border-green-500 pl-3" 
+                            :class="{
+                        'bg-green-100 text-yellow-800': comunicacion.estado === 'BORRADOR',
+                        'bg-blue-100 text-green-800': comunicacion.estado === 'ENVIADO'
+                      }"
                             @click="router.visit(route('comunicaciones.show', comunicacion.id))"
                         >
-                            <p lass="font-medium text-gray-900">{{ comunicacion.asunto }}</p>
-                            <p class="text-sm text-gray-600">{{ comunicacion.tipo }}</p>
+                            <p class="font-medium text-gray-900">{{ comunicacion.asunto }} ({{ comunicacion.remitente?.name }})</p>
+                            <p class="text-sm text-gray-600">{{ comunicacion.tipo }} -
+                                {{ formatDateTime(comunicacion.fecha_envio) }} -
+                                ({{ comunicacion.estado }})</p>
                         </div>
                         
                     </div>
@@ -157,7 +164,21 @@ defineProps({
     proximasReuniones: Array,
     actividadesRecientes: Array,
     datosVivienda: Object,
-});
+})
+
+const formatDateTime = (fecha) => {
+  if (!fecha) return 'N/A'
+  const date = new Date(fecha)
+  return date.toLocaleDateString('es-BO', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,            // 24 horas
+    timeZone: 'UTC'
+  })
+}
 
 //validar si es admin
 import { computed } from 'vue'
@@ -170,4 +191,6 @@ const user = computed(() => page.props.auth?.user)
 const isAdmin = computed(() => {
     return user.value?.rol === 'ADMINISTRADOR'
 })
+
+
 </script>
